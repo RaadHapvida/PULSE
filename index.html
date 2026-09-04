@@ -1,1027 +1,677 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PULSE - Pronto Socorro | Sistema de Triagem Inteligente</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
- 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
-      background: linear-gradient(135deg, #f0f4f8 0%, #e8f1f8 100%);
-      color: #1a3a52;
-      padding: 1rem;
-      min-height: 100vh;
-    }
- 
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-    }
- 
-    .header {
-      background: linear-gradient(135deg, #0066cc 0%, #003d99 100%);
-      color: white;
-      padding: 2rem;
-      border-radius: 12px;
-      margin-bottom: 2rem;
-      box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 2rem;
-    }
- 
-    .header-content h1 {
-      font-size: 28px;
-      margin-bottom: 0.5rem;
-      font-weight: 700;
-    }
- 
-    .header-content p {
-      font-size: 14px;
-      opacity: 0.95;
-      margin-bottom: 0.25rem;
-    }
- 
-    .header-brand {
-      text-align: right;
-      font-size: 13px;
-      opacity: 0.9;
-    }
- 
-    .header-brand strong {
-      display: block;
-      font-size: 14px;
-      margin-bottom: 0.25rem;
-    }
- 
-    .status-badge {
-      background: rgba(255, 255, 255, 0.2);
-      padding: 0.5rem 1rem;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-    }
- 
-    .btn-group {
-      margin-bottom: 2rem;
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
- 
-    .btn {
-      background: #0066cc;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-      transition: all 0.3s;
-      box-shadow: 0 2px 8px rgba(0, 102, 204, 0.2);
-    }
- 
-    .btn:hover {
-      background: #004999;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
-    }
- 
-    .btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
- 
-    .btn-success {
-      background: #16a34a;
-    }
- 
-    .btn-success:hover {
-      background: #15803d;
-    }
- 
-    .btn-danger {
-      background: #dc2626;
-    }
- 
-    .btn-danger:hover {
-      background: #b91c1c;
-    }
- 
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
- 
-    .modal.show {
-      display: flex;
-    }
- 
-    .modal-content {
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 550px;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-    }
- 
-    .modal-close {
-      float: right;
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      color: #999;
-    }
- 
-    .form-group {
-      margin-bottom: 1.5rem;
-      clear: both;
-    }
- 
-    .form-group label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      font-size: 13px;
-      color: #0066cc;
-    }
- 
-    .form-group input,
-    .form-group textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #b3d9ff;
-      border-radius: 6px;
-      font-size: 14px;
-      font-family: inherit;
-    }
- 
-    .form-group input:focus,
-    .form-group textarea:focus {
-      outline: none;
-      border-color: #0066cc;
-      box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
-    }
- 
-    .form-group textarea {
-      min-height: 80px;
-      resize: vertical;
-    }
- 
-    .form-submit {
-      width: 100%;
-      background: #0066cc;
-      color: white;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-    }
- 
-    .form-submit:hover {
-      background: #004999;
-    }
- 
-    .form-submit:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
- 
-    .patient-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-      gap: 1.5rem;
-    }
- 
-    .patient-card {
-      background: white;
-      border: 1px solid #d9e8f5;
-      border-radius: 12px;
-      padding: 1.5rem;
-      transition: all 0.3s;
-      box-shadow: 0 2px 8px rgba(0, 102, 204, 0.08);
-    }
- 
-    .patient-card:hover {
-      border-color: #0066cc;
-      box-shadow: 0 4px 16px rgba(0, 102, 204, 0.12);
-    }
- 
-    .patient-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 1rem;
-      gap: 1rem;
-    }
- 
-    .patient-info h3 {
-      font-size: 16px;
-      font-weight: 700;
-      color: #003d99;
-      margin-bottom: 0.25rem;
-    }
- 
-    .patient-info p {
-      font-size: 13px;
-      color: #4a7ba7;
-      margin-bottom: 0.25rem;
-    }
- 
-    .badge {
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 700;
-      white-space: nowrap;
-      text-transform: uppercase;
-    }
- 
-    .badge-sepse,
-    .badge-avc,
-    .badge-dor_toracica {
-      background: #fee2e2;
-      color: #991b1b;
-    }
- 
-    .badge-vulneravel {
-      background: #dbeafe;
-      color: #1e40af;
-    }
- 
-    .badge-prioritario {
-      background: #dbeafe;
-      color: #1e40af;
-    }
- 
-    .badge-padrao {
-      background: #e0f2fe;
-      color: #0369a1;
-    }
- 
-    .warning-text {
-      background: #fef2f2;
-      color: #991b1b;
-      padding: 0.75rem;
-      border-radius: 6px;
-      font-size: 12px;
-      margin-top: 0.5rem;
-      border-left: 3px solid #dc2626;
-    }
- 
-    .sla-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin: 1rem 0;
-    }
- 
-    .sla-box {
-      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-      padding: 1rem;
-      border-radius: 8px;
-      border-left: 4px solid #0066cc;
-    }
- 
-    .sla-box.warning {
-      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-      border-left-color: #d97706;
-    }
- 
-    .sla-box.overdue {
-      background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-      border-left-color: #dc2626;
-      animation: pulse-red 2s infinite;
-    }
- 
-    @keyframes pulse-red {
-      0%, 100% {
-        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
-      }
-      50% {
-        box-shadow: 0 0 0 8px rgba(220, 38, 38, 0);
-      }
-    }
- 
-    .sla-box.warning {
-      animation: pulse-yellow 2s infinite;
-    }
- 
-    @keyframes pulse-yellow {
-      0%, 100% {
-        box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.5);
-      }
-      50% {
-        box-shadow: 0 0 0 6px rgba(217, 119, 6, 0);
-      }
-    }
- 
-    .sla-label {
-      font-size: 11px;
-      color: #1e40af;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
- 
-    .sla-box.warning .sla-label {
-      color: #92400e;
-    }
- 
-    .sla-box.overdue .sla-label {
-      color: #7f1d1d;
-    }
- 
-    .sla-time {
-      font-size: 22px;
-      font-weight: 700;
-      font-family: 'Monaco', 'Courier New', monospace;
-      color: #003d99;
-    }
- 
-    .sla-box.warning .sla-time {
-      color: #b45309;
-    }
- 
-    .sla-box.overdue .sla-time {
-      color: #dc2626;
-    }
- 
-    .overdue-msg {
-      color: #dc2626;
-      font-size: 10px;
-      font-weight: 700;
-      margin-top: 0.5rem;
-    }
- 
-    .actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
- 
-    .btn-action {
-      padding: 8px 12px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: 600;
-    }
- 
-    .btn-check {
-      background: #16a34a;
-      color: white;
-    }
- 
-    .btn-check:hover {
-      background: #15803d;
-    }
- 
-    .btn-remove {
-      background: #dc2626;
-      color: white;
-    }
- 
-    .btn-remove:hover {
-      background: #b91c1c;
-    }
- 
-    .btn-done {
-      background: #9ca3af;
-      color: white;
-      cursor: default;
-    }
- 
-    .empty {
-      text-align: center;
-      padding: 3rem 1rem;
-      background: white;
-      border-radius: 12px;
-      border: 2px dashed #b3d9ff;
-    }
- 
-    .empty p {
-      color: #4a7ba7;
-      margin-bottom: 0.5rem;
-    }
- 
-    .empty-icon {
-      font-size: 48px;
-      margin-bottom: 1rem;
-    }
- 
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
- 
-    .stat-box {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 8px;
-      border-left: 4px solid #0066cc;
-      box-shadow: 0 2px 8px rgba(0, 102, 204, 0.08);
-    }
- 
-    .stat-number {
-      font-size: 24px;
-      font-weight: 700;
-      color: #0066cc;
-      margin-bottom: 0.25rem;
-    }
- 
-    .stat-label {
-      font-size: 12px;
-      color: #4a7ba7;
-    }
- 
-    .loading {
-      text-align: center;
-      padding: 2rem;
-      color: #4a7ba7;
-    }
- 
-    .spinner {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid #e0e0e0;
-      border-top-color: #0066cc;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
- 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
- 
-    @media (max-width: 768px) {
-      .patient-grid {
-        grid-template-columns: 1fr;
-      }
- 
-      .sla-container {
-        grid-template-columns: 1fr;
-      }
- 
-      .header {
-        flex-direction: column;
-        text-align: center;
-      }
- 
-      .header-brand {
-        text-align: center;
-      }
- 
-      .modal-content {
-        width: 95%;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PULSE - Pronto Socorro | Sistema Inteligente de Triagem</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #e8f1f8 100%);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
+        }
+
+        .header-content h1 {
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-info {
+            font-size: 0.9rem;
+            opacity: 0.95;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #0066cc;
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            color: #0066cc;
+            font-weight: bold;
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0, 102, 204, 0.3);
+        }
+
+        button:hover {
+            background: #0052a3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.4);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content h2 {
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #0066cc;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn-cancel {
+            background: #999;
+        }
+
+        .btn-cancel:hover {
+            background: #777;
+        }
+
+        .patients-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .patient-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #0066cc;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .patient-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .patient-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .patient-info {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .classification {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        .vulneravel {
+            background: #ffe8e8;
+            color: #d32f2f;
+        }
+
+        .prioritario {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .urgente {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .padrao {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .sla-container {
+            margin-top: 1rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .sla-box {
+            background: #f5f5f5;
+            padding: 0.75rem;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        .sla-time {
+            font-weight: bold;
+            color: #0066cc;
+            margin: 0.5rem 0;
+        }
+
+        .sla-ok {
+            color: #27ae60;
+        }
+
+        .sla-warning {
+            color: #f39c12;
+        }
+
+        .sla-danger {
+            color: #e74c3c;
+        }
+
+        .sla-pulse {
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .patient-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn-small {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+            background: #0066cc;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .patients-container {
+                grid-template-columns: 1fr;
+            }
+
+            .patient-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <div class="header-content">
-        <h1>🏥 PULSE - Pronto Socorro</h1>
-        <p>Sistema Inteligente de Triagem | Identificação de Risco em Tempo Real</p>
-      </div>
-      <div class="header-brand">
-        <strong>Hapvida</strong>
-        <div>Hospital São Bernardo</div>
-        <div>São Bernardo do Campo - SP</div>
-        <div class="status-badge" id="status">Conectando...</div>
-      </div>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>💓 PULSE - Pronto Socorro</h1>
+                <div class="header-info">
+                    <div>Sistema Inteligente de Triagem | Identificação de Risco em Tempo Real</div>
+                    <div style="font-size: 0.8rem; margin-top: 0.3rem;">Hapvida | Hospital São Bernardo | São Bernardo do Campo - SP</div>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <div class="status-badge" id="status">🟢 Conectado (localStorage)</div>
+            </div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total de Pacientes</h3>
+                <div class="number" id="totalPacientes">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Vulneráveis Identificados</h3>
+                <div class="number" id="totalVulneraveis">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Prioritários</h3>
+                <div class="number" id="totalPrioritarios">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Protocolos Urgentes</h3>
+                <div class="number" id="totalUrgentes">0</div>
+            </div>
+        </div>
+
+        <div class="action-bar">
+            <button onclick="abrirModal()">+ Novo Paciente</button>
+        </div>
+
+        <div id="patientsContainer" class="patients-container">
+            <div class="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <p>Nenhum paciente registrado</p>
+                <p style="font-size: 0.9rem; margin-top: 0.5rem;">Clique em "+ Novo Paciente" para começar</p>
+            </div>
+        </div>
     </div>
- 
-    <div class="stats">
-      <div class="stat-box">
-        <div class="stat-number" id="total-pacientes">0</div>
-        <div class="stat-label">Total de Pacientes</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-number" id="vulneraveis">0</div>
-        <div class="stat-label">Vulneráveis Identificados</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-number" id="prioritarios">0</div>
-        <div class="stat-label">Prioritários</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-number" id="protocolos">0</div>
-        <div class="stat-label">Protocolos Urgentes</div>
-      </div>
-    </div>
- 
-    <div class="btn-group">
-      <button class="btn" onclick="abrirModal()">+ Novo Paciente</button>
-    </div>
- 
+
     <div id="modal" class="modal">
-      <div class="modal-content">
-        <button class="modal-close" onclick="fecharModal()">×</button>
-        <h2 style="margin-bottom: 1.5rem; color: #0066cc;">Adicionar Paciente</h2>
- 
-        <form onsubmit="adicionarPaciente(event)">
-          <div class="form-group">
-            <label>Nome Completo *</label>
-            <input type="text" id="nome" placeholder="Ex: João Silva" required>
-          </div>
- 
-          <div class="form-group">
-            <label>Data de Nascimento *</label>
-            <input type="date" id="dataNascimento" required>
-          </div>
- 
-          <div class="form-group">
-            <label>Queixa Principal / Sintomas *</label>
-            <textarea id="queixa" placeholder="Ex: Febre 38.5°C há 3 dias, confusão mental, pressão baixa&#10;Ou: Idoso vivendo sozinho, sem apoio familiar&#10;Ou: Gestante com sangramento&#10;Ou: Déficit neurológico focal, afasia" required></textarea>
-          </div>
- 
-          <div style="background: #f0f9ff; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem; border-left: 3px solid #0066cc;">
-            <div style="font-size: 12px; color: #1e40af; font-weight: 600; margin-bottom: 0.5rem;">💡 Dicas de classificação:</div>
-            <div style="font-size: 11px; color: #1e40af; line-height: 1.5;">
-              • <strong>Vulnerável:</strong> Idoso sozinho, sem moradia, deficiência, situação pobreza, imigrante, vítima de violência, criança em risco, transtorno mental, paciente psiquiátrico (PQ), ideação suicida<br>
-              • <strong>Prioritário:</strong> Deficiência, TEA, 60+, gestante, lactante, mobilidade reduzida, obesidade<br>
-              • <strong>Protocolo urgente:</strong> Sepse (febre+confusão), AVC (déficit neurológico), Dor torácica
-            </div>
-          </div>
- 
-          <button type="submit" class="form-submit" id="btn-submit">Adicionar Paciente</button>
-        </form>
-      </div>
+        <div class="modal-content">
+            <h2>Adicionar Novo Paciente</h2>
+            <form onsubmit="adicionarPaciente(event)">
+                <div class="form-group">
+                    <label for="nome">Nome Completo *</label>
+                    <input type="text" id="nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="dataNascimento">Data de Nascimento *</label>
+                    <input type="date" id="dataNascimento" required>
+                </div>
+                <div class="form-group">
+                    <label for="queixa">Queixa Principal *</label>
+                    <textarea id="queixa" required></textarea>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+                    <button type="submit">Adicionar Paciente</button>
+                </div>
+            </form>
+        </div>
     </div>
- 
-    <div id="lista-pacientes"></div>
-  </div>
- 
-  <script>
-    // ============ CONFIGURAÇÃO FIREBASE ============
-    // Você vai receber credenciais por email/WhatsApp
-    // Substitua pelas suas credenciais reais
-    
-   const firebaseConfig = {
-  apiKey: "AIzaSyAt3jutaz75Rby5QaEGUw4Vdd1I8LExeBE",
-  authDomain: "pulse-pronto-socorro.firebaseapp.com",
-  projectId: "pulse-pronto-socorro",
-  storageBucket: "pulse-pronto-socorro.firebasestorage.app",
-  messagingSenderId: "631156990496",
-  appId: "1:631156990496:web:510a04bf5b6ec911a19245"
-};
- 
-    // Para teste inicial, usar localStorage
-    let usarFirebase = true;
-    let pacientes = JSON.parse(localStorage.getItem('pacientes')) || [];
- 
-    // ============ CRITÉRIOS DE CLASSIFICAÇÃO ============
-    const VULNERAVEIS_KEYWORDS = [
-      'idoso', 'sozinho', 'isolado', 'vive só', 'sem apoio', 'sem família',
-      'deficiência', 'deficiente', 'deficiente físico', 'deficiente sensorial', 'deficiente intelectual',
-      'cego', 'surdo', 'cadeira de rodas', 'paralisia',
-      'doença crônica', 'crônico', 'complexo',
-      'pobreza', 'pobre', 'exclusão social', 'vulnerável',
-      'imigrante', 'barreira linguística', 'estrangeiro',
-      'sem moradia', 'sem teto', 'rua', 'abrigado',
-      'violência', 'abuso', 'agressão', 'vítima',
-      'criança risco', 'criança negligenciada', 'criança abusada',
-      'transtorno mental', 'transtorno psiquiátrico', 'esquizofrenia', 'bipolar', 'depressão',
-      'pq', 'psiquiátrico', 'psiquiátrica', 'paciente psiquiátrico', 'paciente psiquiátrica',
-      'ideação suicida', 'ideacao suicida', 'pensamento suicida', 'tentativa de suicídio', 'tentativa de auto exterminio', 'auto exterminio',
-      'suicídio', 'suicida', 'suicídas', 'risco suicida'
-    ];
- 
-    const PRIORITARIOS_KEYWORDS = [
-      'deficiência', 'deficiente',
-      'autismo', 'autista', 'tea', 'espectro autista',
-      'idoso', 'idosa', '60', '70', '80', '90', 'idoso 80', 'maiores de 80',
-      'gestante', 'grávida', 'gravidez', 'gestação', 'prenhe',
-      'lactante', 'amamentando', 'aleitamento',
-      'criança colo', 'bebê', 'lactante', 'criança pequena',
-      'mobilidade reduzida', 'muleta', 'bengala', 'andador',
-      'obesidade', 'obeso',
-      'doador sangue'
-    ];
- 
-    const SLA_CONFIG = {
-      sepse: { first: 60, second: 180 },
-      avc: { first: 60, second: 180 },
-      dor_toracica: { first: 60, second: 180 },
-      vulneravel: { first: 60, second: 180 },
-      prioritario: { first: 60, second: 180 },
-      padrao: { first: 120, second: 240 }
-    };
- 
-    // ============ FUNÇÕES BÁSICAS ============
-    function calcularIdade(dataNascimento) {
-      const hoje = new Date();
-      const nasc = new Date(dataNascimento);
-      let idade = hoje.getFullYear() - nasc.getFullYear();
-      const mes = hoje.getMonth() - nasc.getMonth();
-      
-      if (mes < 0 || (mes === 0 && hoje.getDate() < nasc.getDate())) {
-        idade--;
-      }
-      
-      return idade;
-    }
- 
-    function formatarData(data) {
-      const d = new Date(data);
-      const dia = String(d.getDate()).padStart(2, '0');
-      const mes = String(d.getMonth() + 1).padStart(2, '0');
-      const ano = d.getFullYear();
-      return `${dia}/${mes}/${ano}`;
-    }
- 
-    function formatarDataHora(data) {
-      const d = new Date(data);
-      const dia = String(d.getDate()).padStart(2, '0');
-      const mes = String(d.getMonth() + 1).padStart(2, '0');
-      const ano = d.getFullYear();
-      const hora = String(d.getHours()).padStart(2, '0');
-      const minuto = String(d.getMinutes()).padStart(2, '0');
-      return `${dia}/${mes}/${ano} às ${hora}:${minuto}`;
-    }
- 
-    function abrirModal() {
-      document.getElementById('modal').classList.add('show');
-    }
- 
-    function fecharModal() {
-      document.getElementById('modal').classList.remove('show');
-      document.getElementById('nome').value = '';
-      document.getElementById('dataNascimento').value = '';
-      document.getElementById('queixa').value = '';
-    }
- 
-    // ============ CLASSIFICAÇÃO ============
-    function classificarPaciente(nome, idade, queixa) {
-      const texto = (nome + ' ' + idade + ' ' + queixa).toLowerCase();
-      const idadeNum = parseInt(idade);
- 
-      // ★ PALAVRAS-CHAVE DIRETAS (máxima prioridade)
-      if (texto.includes('vulnerável') || texto.includes('vulneravel')) {
-        return { tipo: 'vulneravel', motivo: 'VULNERÁVEL: classificado diretamente' };
-      }
- 
-      if (texto.includes('prioritário') || texto.includes('prioritario')) {
-        return { tipo: 'prioritario', motivo: 'PRIORITÁRIO: classificado diretamente' };
-      }
- 
-      // ★ PSIQUIÁTRICO + IDEAÇÃO/PENSAMENTO SUICIDA (VULNERÁVEL)
-      if ((texto.includes('pq') || texto.includes('psiquiátrico') || texto.includes('psiquiátrica')) &&
-          (texto.includes('ideação') || texto.includes('ideacao') || texto.includes('pensamento suicida') || texto.includes('suicida') || texto.includes('auto exterminio'))) {
-        return { tipo: 'vulneravel', motivo: 'VULNERÁVEL: Paciente psiquiátrico com ideação suicida' };
-      }
- 
-      // ★ SÓ IDEAÇÃO/PENSAMENTO SUICIDA (VULNERÁVEL)
-      if (texto.includes('ideação') || texto.includes('ideacao') || texto.includes('pensamento suicida') || 
-          texto.includes('tentativa de suicídio') || texto.includes('tentativa de auto exterminio') || texto.includes('auto exterminio') ||
-          texto.includes('risco suicida')) {
-        return { tipo: 'vulneravel', motivo: 'VULNERÁVEL: Risco suicida/ideação suicida' };
-      }
- 
-      // ★ SÓ PSIQUIÁTRICO (VULNERÁVEL)
-      if (texto.includes('pq') || texto.includes('psiquiátrico') || texto.includes('psiquiátrica')) {
-        return { tipo: 'vulneravel', motivo: 'VULNERÁVEL: Paciente psiquiátrico' };
-      }
- 
-      if (texto.includes('sepse') || 
-          (texto.includes('febre') && (texto.includes('confusão') || texto.includes('desorientação'))) ||
-          (texto.includes('febre') && (texto.includes('hipotensão') || texto.includes('pressão baixa'))) ||
-          (texto.includes('febre') && texto.includes('choque'))) {
-        return { tipo: 'sepse', motivo: 'SEPSE: febre + confusão/hipotensão/choque' };
-      }
- 
-      if (texto.includes('avc') || 
-          texto.includes('acidente vascular') ||
-          (texto.includes('deficit') && texto.includes('neurológico')) ||
-          texto.includes('hemiplégia') ||
-          texto.includes('afasia') ||
-          (texto.includes('paralisia') && (texto.includes('face') || texto.includes('braço') || texto.includes('perna')))) {
-        return { tipo: 'avc', motivo: 'AVC: deficit neurológico focal agudo' };
-      }
- 
-      if ((texto.includes('dor') && (texto.includes('torác') || texto.includes('peito'))) ||
-          texto.includes('dor torácica') ||
-          texto.includes('dor toracica') ||
-          texto.includes('iam') ||
-          texto.includes('infarto') ||
-          texto.includes('infarto agudo do miocárdio') ||
-          texto.includes('infarto agudo do miocardio') ||
-          texto.includes('angina') ||
-          (texto.includes('pressão') && texto.includes('peito')) ||
-          (texto.includes('aperto') && texto.includes('peito')) ||
-          (texto.includes('dor') && texto.includes('isquêmico'))) {
-        return { tipo: 'dor_toracica', motivo: 'DOR TORÁCICA: risco de evento isquêmico' };
-      }
- 
-      if (VULNERAVEIS_KEYWORDS.some(k => texto.includes(k))) {
-        return { tipo: 'vulneravel', motivo: 'VULNERÁVEL: paciente em situação de vulnerabilidade' };
-      }
- 
-      if (PRIORITARIOS_KEYWORDS.some(k => texto.includes(k)) || idadeNum >= 60) {
-        if (idadeNum >= 80) {
-          return { tipo: 'prioritario', motivo: 'PRIORITÁRIO: Idoso 80+ anos (prioridade especial)' };
+
+    <!-- Scripts do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        // ============ CONFIGURAÇÃO SUPABASE ============
+        const SUPABASE_URL = 'https://bkcteynedqjuvkiannqz.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJrY3RleW5lZHFqdXZraWFubnF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NDgxMzQsImV4cCI6MjEwNDEyNDEzNH0.DM3-_JU7Zs1mtlkiPGzTaaSQjS1kZnKWOtupjZmoP1s';
+
+        let supabase;
+        let pacientes = [];
+        let usarSupabase = false;
+
+        // Inicializar Supabase
+        async function inicializarSupabase() {
+            try {
+                const { createClient } = window.supabase;
+                supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                
+                // Testar conexão
+                const { data, error } = await supabase
+                    .from('pacientes')
+                    .select('count()', { count: 'exact' })
+                    .limit(1);
+
+                if (!error) {
+                    usarSupabase = true;
+                    document.getElementById('status').innerHTML = '🟢 Conectado (Supabase)';
+                    console.log('✓ Conectado ao Supabase com sucesso');
+                    
+                    // Carregar pacientes do Supabase
+                    carregarPacientes();
+                    
+                    // Ouvir mudanças em tempo real
+                    supabase
+                        .channel('pacientes-changes')
+                        .on('postgres_changes', 
+                            { event: '*', schema: 'public', table: 'pacientes' },
+                            (payload) => {
+                                console.log('Mudança detectada:', payload);
+                                carregarPacientes();
+                            }
+                        )
+                        .subscribe();
+                } else {
+                    console.log('Usando localStorage:', error);
+                    usarSupabase = false;
+                }
+            } catch (error) {
+                console.log('Supabase indisponível, usando localStorage:', error);
+                usarSupabase = false;
+            }
         }
-        return { tipo: 'prioritario', motivo: 'PRIORITÁRIO: paciente com características de prioridade' };
-      }
- 
-      return { tipo: 'padrao', motivo: 'Triagem padrão' };
-    }
- 
-    function adicionarPaciente(event) {
-      event.preventDefault();
- 
-      const nome = document.getElementById('nome').value;
-      const dataNascimento = document.getElementById('dataNascimento').value;
-      const idade = calcularIdade(dataNascimento);
-      const queixa = document.getElementById('queixa').value;
- 
-      const classif = classificarPaciente(nome, idade, queixa);
- 
-      const paciente = {
-        id: Date.now(),
-        nome,
-        dataNascimento,
-        idade,
-        queixa,
-        tipo: classif.tipo,
-        motivo: classif.motivo,
-        criacao: new Date().toISOString(),
-        primeiro: null,
-        segundo: null
-      };
- 
-      pacientes.unshift(paciente);
-      salvarDados();
- 
-      fecharModal();
-      renderizarPacientes();
-    }
- 
-    function marcarAvaliacao(id, tipo) {
-      const p = pacientes.find(x => x.id === id);
-      if (p) {
-        if (tipo === 'primeira') p.primeiro = new Date().toISOString();
-        if (tipo === 'segunda') p.segundo = new Date().toISOString();
-        salvarDados();
-        renderizarPacientes();
-      }
-    }
- 
-    function removerPaciente(id) {
-      if (confirm('Remover paciente?')) {
-        pacientes = pacientes.filter(p => p.id !== id);
-        salvarDados();
-        renderizarPacientes();
-      }
-    }
- 
-    function salvarDados() {
-      localStorage.setItem('pacientes', JSON.stringify(pacientes));
-    }
- 
-    // ============ NOTIFICAÇÕES ============
-    function solicitarPermissaoNotificacao() {
-      if ('Notification' in window && Notification.permission === 'default') {
-        Notification.requestPermission();
-      }
-    }
- 
-    function enviarNotificacao(titulo, opcoes = {}) {
-      if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification(titulo, {
-          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%230066cc" width="100" height="100"/><text x="50" y="70" font-size="60" font-weight="bold" fill="white" text-anchor="middle">!</text></svg>',
-          badge: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23dc2626"/></svg>',
-          ...opcoes
+
+        // Carregar pacientes
+        async function carregarPacientes() {
+            if (usarSupabase) {
+                try {
+                    const { data, error } = await supabase
+                        .from('pacientes')
+                        .select('*')
+                        .order('data_inclusao', { ascending: false });
+
+                    if (!error) {
+                        pacientes = data || [];
+                        renderizarPacientes();
+                        return;
+                    }
+                } catch (e) {
+                    console.log('Erro ao carregar do Supabase:', e);
+                }
+            }
+
+            // Fallback: localStorage
+            pacientes = JSON.parse(localStorage.getItem('pacientes')) || [];
+            renderizarPacientes();
+        }
+
+        // Adicionar paciente
+        async function adicionarPaciente(event) {
+            event.preventDefault();
+
+            const nome = document.getElementById('nome').value;
+            const dataNascimento = document.getElementById('dataNascimento').value;
+            const queixa = document.getElementById('queixa').value;
+            const dataInclusao = new Date().toLocaleString('pt-BR');
+
+            const paciente = {
+                id: Date.now(),
+                nome,
+                data_nascimento: dataNascimento,
+                queixa,
+                classificacao: classificarPaciente(queixa),
+                data_inclusao: dataInclusao,
+                avaliacao_1: null,
+                avaliacao_2: null
+            };
+
+            if (usarSupabase) {
+                try {
+                    const { error } = await supabase
+                        .from('pacientes')
+                        .insert([{
+                            nome: paciente.nome,
+                            data_nascimento: paciente.data_nascimento,
+                            queixa: paciente.queixa,
+                            classificacao: paciente.classificacao,
+                            data_inclusao: new Date().toISOString(),
+                            avaliacao_1: null,
+                            avaliacao_2: null
+                        }]);
+
+                    if (error) throw error;
+                    console.log('✓ Paciente salvo em Supabase');
+                } catch (error) {
+                    console.log('Erro ao salvar em Supabase:', error);
+                    // Fallback para localStorage
+                    pacientes.push(paciente);
+                    localStorage.setItem('pacientes', JSON.stringify(pacientes));
+                }
+            } else {
+                pacientes.push(paciente);
+                localStorage.setItem('pacientes', JSON.stringify(pacientes));
+            }
+
+            renderizarPacientes();
+            fecharModal();
+            limparForm();
+        }
+
+        // Classificar paciente
+        function classificarPaciente(queixa) {
+            const queixaLower = queixa.toLowerCase();
+
+            // Protocolos urgentes
+            if (queixaLower.includes('sepse') || 
+                (queixaLower.includes('febre') && (queixaLower.includes('confusão') || queixaLower.includes('hipotensão')))) {
+                return 'Sepse';
+            }
+            if (queixaLower.includes('avc') || queixaLower.includes('acidente vascular') || 
+                queixaLower.includes('deficit neurológico')) {
+                return 'AVC';
+            }
+            if (queixaLower.includes('dor torácica') || queixaLower.includes('dor toracica') || 
+                queixaLower.includes('iam') || queixaLower.includes('infarto') || queixaLower.includes('angina')) {
+                return 'Dor Torácica';
+            }
+
+            // Vulnerável
+            if (queixaLower.includes('vulnerável') || queixaLower.includes('vulneravel')) return 'Vulnerável';
+            if (queixaLower.includes('psiquiátrico') || queixaLower.includes('pq') || 
+                queixaLower.includes('suicida') || queixaLower.includes('ideação')) {
+                return 'Vulnerável';
+            }
+
+            // Prioritário
+            if (queixaLower.includes('prioritário') || queixaLower.includes('prioritario')) return 'Prioritário';
+            if (queixaLower.includes('idoso') || queixaLower.includes('gestante') || 
+                queixaLower.includes('criança')) {
+                return 'Prioritário';
+            }
+
+            return 'Padrão';
+        }
+
+        // Renderizar pacientes
+        function renderizarPacientes() {
+            const container = document.getElementById('patientsContainer');
+            const stats = {
+                total: pacientes.length,
+                vulneraveis: pacientes.filter(p => p.classificacao === 'Vulnerável').length,
+                prioritarios: pacientes.filter(p => p.classificacao === 'Prioritário').length,
+                urgentes: pacientes.filter(p => ['Sepse', 'AVC', 'Dor Torácica'].includes(p.classificacao)).length
+            };
+
+            document.getElementById('totalPacientes').textContent = stats.total;
+            document.getElementById('totalVulneraveis').textContent = stats.vulneraveis;
+            document.getElementById('totalPrioritarios').textContent = stats.prioritarios;
+            document.getElementById('totalUrgentes').textContent = stats.urgentes;
+
+            if (pacientes.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="empty-state-icon">📋</div>
+                        <p>Nenhum paciente registrado</p>
+                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">Clique em "+ Novo Paciente" para começar</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = pacientes.map(p => `
+                <div class="patient-card">
+                    <div class="patient-name">${p.nome}</div>
+                    <div class="patient-info">📅 Nasc: ${new Date(p.data_nascimento).toLocaleDateString('pt-BR')}</div>
+                    <div class="patient-info">📋 ${p.data_inclusao}</div>
+                    <div class="patient-info">🔍 ${p.queixa}</div>
+                    <span class="classification ${p.classificacao.toLowerCase().replace(' ', '')}">${p.classificacao}</span>
+                    <div class="patient-actions">
+                        <button class="btn-small" onclick="marcarAvaliacao(${p.id}, 1)">✓ 1ª</button>
+                        <button class="btn-small" onclick="marcarAvaliacao(${p.id}, 2)">✓ 2ª</button>
+                        <button class="btn-small btn-danger" onclick="removerPaciente(${p.id})">✕ Remover</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Marcar avaliação
+        function marcarAvaliacao(id, avaliacao) {
+            const paciente = pacientes.find(p => p.id === id);
+            if (paciente) {
+                const campo = avaliacao === 1 ? 'avaliacao_1' : 'avaliacao_2';
+                paciente[campo] = new Date().toLocaleString('pt-BR');
+                
+                if (usarSupabase) {
+                    supabase.from('pacientes').update({ [campo]: new Date().toISOString() })
+                        .eq('id', paciente.id).then(() => carregarPacientes());
+                } else {
+                    localStorage.setItem('pacientes', JSON.stringify(pacientes));
+                    renderizarPacientes();
+                }
+            }
+        }
+
+        // Remover paciente
+        function removerPaciente(id) {
+            if (confirm('Tem certeza que deseja remover este paciente?')) {
+                pacientes = pacientes.filter(p => p.id !== id);
+                
+                if (usarSupabase) {
+                    supabase.from('pacientes').delete().eq('id', id).then(() => carregarPacientes());
+                } else {
+                    localStorage.setItem('pacientes', JSON.stringify(pacientes));
+                    renderizarPacientes();
+                }
+            }
+        }
+
+        // UI Functions
+        function abrirModal() {
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function fecharModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        function limparForm() {
+            document.getElementById('nome').value = '';
+            document.getElementById('dataNascimento').value = '';
+            document.getElementById('queixa').value = '';
+        }
+
+        // Inicializar
+        window.addEventListener('load', () => {
+            inicializarSupabase();
+            carregarPacientes();
         });
-      }
-    }
- 
-    function verificarSLAVencido() {
-      pacientes.forEach(p => {
-        const sla = SLA_CONFIG[p.tipo] || SLA_CONFIG.padrao;
-        const agora = new Date();
-        
-        // Verificar 1ª avaliação
-        if (!p.primeiro) {
-          const decorrido = Math.floor((agora - new Date(p.criacao)) / 1000);
-          const limiteMinutos = sla.first * 60;
-          
-          // Notificação se passou o SLA (vermelho)
-          if (decorrido > limiteMinutos && !p.notificado_primeiro) {
-            enviarNotificacao(`⚠️ SLA VENCIDO: ${p.nome}`, {
-              body: `1ª avaliação venceu há ${Math.floor((decorrido - limiteMinutos) / 60)}min`,
-              tag: `sla-${p.id}-1`,
-              requireInteraction: true
-            });
-            p.notificado_primeiro = true;
-            salvarDados();
-          }
-          
-          // Alerta se está faltando 5 minutos (amarelo)
-          if (decorrido > limiteMinutos * 0.9 && decorrido < limiteMinutos && !p.alerta_primeiro) {
-            enviarNotificacao(`⏰ SLA PRÓXIMO: ${p.nome}`, {
-              body: `1ª avaliação vence em ${Math.ceil((limiteMinutos - decorrido) / 60)}min`,
-              tag: `alert-${p.id}-1`
-            });
-            p.alerta_primeiro = true;
-            salvarDados();
-          }
-        }
- 
-        // Verificar 2ª avaliação
-        if (p.primeiro && !p.segundo) {
-          const decorrido = Math.floor((agora - new Date(p.primeiro)) / 1000);
-          const limiteMinutos = sla.second * 60;
-          
-          // Notificação se passou o SLA (vermelho)
-          if (decorrido > limiteMinutos && !p.notificado_segundo) {
-            enviarNotificacao(`⚠️ SLA VENCIDO: ${p.nome}`, {
-              body: `2ª avaliação venceu há ${Math.floor((decorrido - limiteMinutos) / 60)}min`,
-              tag: `sla-${p.id}-2`,
-              requireInteraction: true
-            });
-            p.notificado_segundo = true;
-            salvarDados();
-          }
-          
-          // Alerta se está faltando 5 minutos (amarelo)
-          if (decorrido > limiteMinutos * 0.9 && decorrido < limiteMinutos && !p.alerta_segundo) {
-            enviarNotificacao(`⏰ SLA PRÓXIMO: ${p.nome}`, {
-              body: `2ª avaliação vence em ${Math.ceil((limiteMinutos - decorrido) / 60)}min`,
-              tag: `alert-${p.id}-2`
-            });
-            p.alerta_segundo = true;
-            salvarDados();
-          }
-        }
-      });
-    }
- 
-    function formatarTempo(segundos) {
-      const horas = Math.floor(segundos / 3600);
-      const mins = Math.floor((segundos % 3600) / 60);
-      const segs = segundos % 60;
- 
-      if (horas > 0) {
-        return `${horas}:${mins.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
-      }
-      return `${mins}:${segs.toString().padStart(2, '0')}`;
-    }
- 
-    function statusAvaliacao(p, tipo) {
-      const sla = SLA_CONFIG[p.tipo] || SLA_CONFIG.padrao;
-      const agora = new Date();
- 
-      if (tipo === 'primeira') {
-        if (p.primeiro) return 'completo';
- 
-        const decorrido = Math.floor((agora - new Date(p.criacao)) / 1000);
-        const limite = sla.first * 60;
- 
-        if (decorrido > limite) return 'overdue';
-        if (decorrido > limite * 0.8) return 'warning';
-        return 'ok';
-      } else {
-        if (!p.primeiro) return 'waiting';
-        if (p.segundo) return 'completo';
- 
-        const decorrido = Math.floor((agora - new Date(p.primeiro)) / 1000);
-        const limite = sla.second * 60;
- 
-        if (decorrido > limite) return 'overdue';
-        if (decorrido > limite * 0.8) return 'warning';
-        return 'ok';
-      }
-    }
- 
-    function tempoDecorrido(p, tipo) {
-      const agora = new Date();
-      const inicio = tipo === 'primeira' ? new Date(p.criacao) : new Date(p.primeiro);
- 
-      if (!inicio) return 0;
-      return Math.floor((agora - inicio) / 1000);
-    }
- 
-    function atualizarStats() {
-      document.getElementById('total-pacientes').textContent = pacientes.length;
-      document.getElementById('vulneraveis').textContent = pacientes.filter(p => p.tipo === 'vulneravel').length;
-      document.getElementById('prioritarios').textContent = pacientes.filter(p => p.tipo === 'prioritario').length;
-      const protocolos = pacientes.filter(p => ['sepse', 'avc', 'dor_toracica'].includes(p.tipo)).length;
-      document.getElementById('protocolos').textContent = protocolos;
-    }
- 
-    function renderizarPacientes() {
-      const container = document.getElementById('lista-pacientes');
- 
-      if (pacientes.length === 0) {
-        container.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><p>Nenhum paciente registrado</p><p style="font-size: 12px; color: #999;">Clique em "+ Novo Paciente" para começar</p></div>';
-        atualizarStats();
-        return;
-      }
- 
-      container.innerHTML = '<div class="patient-grid">' + pacientes.map(p => {
-        const sla = SLA_CONFIG[p.tipo] || SLA_CONFIG.padrao;
-        const tempo1 = tempoDecorrido(p, 'primeira');
-        const tempo2 = p.primeiro ? tempoDecorrido(p, 'segunda') : 0;
- 
-        const status1 = statusAvaliacao(p, 'primeira');
-        const status2 = statusAvaliacao(p, 'segunda');
- 
-        const atrasada1 = tempo1 > sla.first * 60;
-        const atrasada2 = p.primeiro && tempo2 > sla.second * 60;
- 
-        const dataNascFormatada = p.dataNascimento ? formatarData(p.dataNascimento) : 'Data não informada';
-        const dataInclusaoFormatada = p.criacao ? formatarDataHora(p.criacao) : 'Data não informada';
- 
-        return `
-          <div class="patient-card">
-            <div class="patient-header">
-              <div class="patient-info">
-                <h3>${p.nome}</h3>
-                <p>Nasc: ${dataNascFormatada} • ${p.queixa.substring(0, 50)}${p.queixa.length > 50 ? '...' : ''}</p>
-                <p style="font-size: 11px; color: #888; margin-top: 0.25rem;">📋 Inclusão: ${dataInclusaoFormatada}</p>
-                ${p.motivo ? `<div class="warning-text">⚠️ ${p.motivo}</div>` : ''}
-              </div>
-              <span class="badge badge-${p.tipo}">${p.tipo.replace('_', ' ')}</span>
-            </div>
- 
-            <div class="sla-container">
-              <div class="sla-box ${status1 === 'overdue' ? 'overdue' : status1 === 'warning' ? 'warning' : ''}">
-                <div class="sla-label">1ª Reavaliação (${sla.first}min) ${p.primeiro ? '✓' : ''}</div>
-                <div class="sla-time ${status1 === 'overdue' ? 'overdue' : status1 === 'warning' ? 'warning' : ''}">${formatarTempo(tempo1)}</div>
-                ${atrasada1 ? `<div class="overdue-msg">ATRASADO: +${formatarTempo(tempo1 - sla.first * 60)}</div>` : ''}
-              </div>
- 
-              <div class="sla-box ${status2 === 'overdue' ? 'overdue' : status2 === 'warning' ? 'warning' : ''}">
-                <div class="sla-label">2ª Reavaliação (${sla.second}min) ${p.segundo ? '✓' : ''}</div>
-                ${p.primeiro ? `
-                  <div class="sla-time ${status2 === 'overdue' ? 'overdue' : status2 === 'warning' ? 'warning' : ''}">${formatarTempo(tempo2)}</div>
-                  ${atrasada2 ? `<div class="overdue-msg">ATRASADO: +${formatarTempo(tempo2 - sla.second * 60)}</div>` : ''}
-                ` : `
-                  <div style="color: #4a7ba7; font-size: 12px; font-style: italic;">Aguardando 1ª avaliação</div>
-                `}
-              </div>
-            </div>
- 
-            <div class="actions">
-              ${!p.primeiro ? `<button class="btn-action btn-check" onclick="marcarAvaliacao(${p.id}, 'primeira')">✓ Marcar 1ª</button>` : ''}
-              ${p.primeiro && !p.segundo ? `<button class="btn-action btn-check" onclick="marcarAvaliacao(${p.id}, 'segunda')">✓ Marcar 2ª</button>` : ''}
-              ${p.segundo ? `<button class="btn-action btn-done" disabled>✓ Completo</button>` : ''}
-              <button class="btn-action btn-remove" onclick="removerPaciente(${p.id})">✕ Remover</button>
-            </div>
-          </div>
-        `;
-      }).join('') + '</div>';
- 
-      atualizarStats();
-    }
- 
-    // ============ INICIALIZAÇÃO ============
-    document.getElementById('status').textContent = '🟢 Conectado (localStorage)';
-    
-    // Solicitar permissão para notificações
-    solicitarPermissaoNotificacao();
-    
-    // Atualizar renderização a cada segundo
-    setInterval(renderizarPacientes, 1000);
-    
-    // Verificar SLA vencido a cada 30 segundos
-    setInterval(verificarSLAVencido, 30000);
-    
-    // Primeira renderização e verificação
-    renderizarPacientes();
-    verificarSLAVencido();
-  </script>
+
+        // Fechá modal ao clicar fora
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target.id === 'modal') fecharModal();
+        });
+    </script>
 </body>
 </html>
