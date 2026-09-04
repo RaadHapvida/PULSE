@@ -588,17 +588,17 @@
     // Você vai receber credenciais por email/WhatsApp
     // Substitua pelas suas credenciais reais
  
-    const firebaseConfig = {
-      apiKey: "SEU_API_KEY_AQUI",
-      authDomain: "seu-projeto.firebaseapp.com",
-      projectId: "seu-projeto",
-      storageBucket: "seu-projeto.appspot.com",
-      messagingSenderId: "seu-id",
-      appId: "seu-app-id"
-    };
+   const firebaseConfig = {
+  apiKey: "AIzaSyAt3jutaz75Rby5QaEGUw4Vdd1I8LExeBE",
+  authDomain: "pulse-pronto-socorro.firebaseapp.com",
+  projectId: "pulse-pronto-socorro",
+  storageBucket: "pulse-pronto-socorro.firebasestorage.app",
+  messagingSenderId: "631156990496",
+  appId: "1:631156990496:web:510a04bf5b6ec911a19245"
+};
  
     // Para teste inicial, usar localStorage
-    let usarFirebase = false;
+    let usarFirebase = true;
     let pacientes = JSON.parse(localStorage.getItem('pacientes')) || [];
  
     // ============ CRITÉRIOS DE CLASSIFICAÇÃO ============
