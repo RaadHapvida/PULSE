@@ -588,17 +588,30 @@
     // Você vai receber credenciais por email/WhatsApp
     // Substitua pelas suas credenciais reais
  
-    const firebaseConfig = {
-      apiKey: "SEU_API_KEY_AQUI",
-      authDomain: "seu-projeto.firebaseapp.com",
-      projectId: "seu-projeto",
-      storageBucket: "seu-projeto.appspot.com",
-      messagingSenderId: "seu-id",
-      appId: "seu-app-id"
-    };
+    // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyBMSynAf9vW_lE8D1phBfC4FVTZXarzcRk",
+  authDomain: "pulse---pronto-socorro.firebaseapp.com",
+  projectId: "pulse---pronto-socorro",
+  storageBucket: "pulse---pronto-socorro.firebasestorage.app",
+  messagingSenderId: "128946273696",
+  appId: "1:128946273696:web:c753a87e4c001f6e9a78c5",
+  measurementId: "G-76GWZB675W"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
  
     // Para teste inicial, usar localStorage
-    let usarFirebase = false;
+    let usarFirebase = true;
     let pacientes = JSON.parse(localStorage.getItem('pacientes')) || [];
  
     // ============ CRITÉRIOS DE CLASSIFICAÇÃO ============
