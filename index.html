@@ -565,6 +565,121 @@
       margin-top: 0.5rem;
     }
 
+    /* ===== Barra de estatísticas slim ===== */
+    .stats-slim {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .stat-pill {
+      display: flex;
+      align-items: baseline;
+      gap: 0.4rem;
+      background: white;
+      border-radius: 10px;
+      padding: 0.5rem 0.9rem;
+      box-shadow: 0 2px 8px rgba(0, 102, 204, 0.08);
+      border-left: 3px solid #0066cc;
+    }
+    .stat-pill-num { font-size: 18px; font-weight: 700; color: #0066cc; }
+    .stat-pill-label { font-size: 12px; color: #4a7ba7; }
+    .stat-pill-sub { color: #991b1b; font-weight: 600; }
+    .overdue-pill { border-left-color: #dc2626; background: #fef2f2; }
+    .overdue-pill .stat-pill-num { color: #dc2626; }
+    .overdue-pill .stat-pill-label { color: #991b1b; }
+
+    /* ===== Controles (busca, filtros, tema) ===== */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .busca-input {
+      flex: 1;
+      min-width: 200px;
+      padding: 10px 12px;
+      border: 1px solid #b3d9ff;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    .busca-input:focus { outline: none; border-color: #0066cc; box-shadow: 0 0 0 3px rgba(0,102,204,0.1); }
+    .filtros { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+    .filtro-btn {
+      background: white; border: 1px solid #b3d9ff; color: #4a7ba7;
+      padding: 8px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer;
+    }
+    .filtro-btn.active { background: #0066cc; color: white; border-color: #0066cc; }
+    .btn-icon {
+      background: white; border: 1px solid #b3d9ff; border-radius: 8px;
+      padding: 8px 12px; font-size: 16px; cursor: pointer;
+    }
+
+    .header-clock {
+      font-size: 20px; font-weight: 700;
+      font-family: 'Monaco', 'Courier New', monospace;
+      margin-top: 0.4rem; letter-spacing: 1px;
+    }
+
+    /* ===== Anel de contagem + descrição das reavaliações ===== */
+    .reav-block { display: flex; align-items: center; gap: 1.1rem; margin: 1rem 0; }
+    .ring-wrap { position: relative; width: 88px; height: 88px; flex-shrink: 0; }
+    .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .ring-time { font-size: 16px; font-weight: 700; font-family: 'Monaco', 'Courier New', monospace; }
+    .ring-label { font-size: 9px; font-weight: 600; color: #94a3b8; margin-top: 2px; }
+    .ring-track { stroke: #eef2f7; }
+    .reav-desc { flex: 1; font-size: 12.5px; line-height: 1.5; }
+    .reav-line { margin-bottom: 2px; color: #475569; }
+    .reav-ok { color: #16a34a; font-weight: 600; }
+    .reav-late { color: #dc2626; font-weight: 700; }
+    .reav-run { color: #0369a1; font-weight: 600; }
+    .reav-wait { color: #94a3b8; font-style: italic; }
+
+    /* ===== Botão editar + toast ===== */
+    .btn-edit { background: #7c3aed; color: white; }
+    .btn-edit:hover { background: #6d28d9; }
+
+    .toast {
+      position: fixed; left: 50%; bottom: 24px;
+      transform: translateX(-50%) translateY(160%);
+      background: #0f172a; color: white; padding: 0.85rem 1.25rem;
+      border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+      display: flex; align-items: center; gap: 1rem; z-index: 1500;
+      transition: transform 0.25s; font-size: 14px; max-width: 90%;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast button {
+      background: #3b82f6; color: white; border: none;
+      padding: 6px 14px; border-radius: 8px; font-weight: 600; cursor: pointer;
+    }
+
+    /* ===== Modo escuro (plantão noturno) ===== */
+    body.dark { background: linear-gradient(135deg, #0f172a 0%, #111827 100%); color: #e2e8f0; }
+    body.dark .patient-card { background: #1e293b; border-color: #334155; box-shadow: none; }
+    body.dark .patient-card:hover { border-color: #3b82f6; }
+    body.dark .patient-info h3 { color: #f1f5f9; }
+    body.dark .patient-info p { color: #94a3b8; }
+    body.dark .stat-pill, body.dark .btn-icon, body.dark .filtro-btn, body.dark .busca-input { background: #1e293b; color: #e2e8f0; border-color: #334155; }
+    body.dark .stat-pill-label { color: #94a3b8; }
+    body.dark .stat-pill-num { color: #60a5fa; }
+    body.dark .filtro-btn.active { background: #2563eb; color: white; border-color: #2563eb; }
+    body.dark .bundle { background: #0f172a; border-color: #334155; }
+    body.dark .bundle-item { color: #cbd5e1; }
+    body.dark .criterios-text { background: #0f2942; color: #93c5fd; border-left-color: #3b82f6; }
+    body.dark .reav-line { color: #cbd5e1; }
+    body.dark .ring-track { stroke: #334155; }
+    body.dark .modal-content { background: #1e293b; color: #e2e8f0; }
+    body.dark .modal-content h2 { color: #60a5fa; }
+    body.dark .form-group input, body.dark .form-group textarea { background: #0f172a; color: #e2e8f0; border-color: #334155; }
+    body.dark .chip { background: #0f172a; color: #cbd5e1; border-color: #334155; }
+    body.dark .date-group-header { background: #1e293b; color: #e2e8f0; border-left-color: #64748b; }
+    body.dark .date-group-count { background: #0f172a; color: #94a3b8; }
+    body.dark .empty { background: #1e293b; border-color: #334155; }
+    body.dark .empty p { color: #94a3b8; }
+
     .sla-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -961,6 +1076,7 @@
       <div class="header-brand">
         <span class="brand-hapvida">Hapvida</span>
         <span class="brand-hospital">Hospital São Bernardo</span>
+        <div class="header-clock" id="relogio">--:--:--</div>
         <div class="status-badge" id="status">Conectando...</div>
         <div class="user-badge" id="user-badge" style="display:none;">
           <span class="user-email" id="user-email"></span>
@@ -969,37 +1085,33 @@
       </div>
     </div>
 
-    <div class="stats">
-      <div class="stat-box">
-        <div class="stat-number" id="total-pacientes">0</div>
-        <div class="stat-label">Total de Pacientes</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-number" id="vulneraveis">0</div>
-        <div class="stat-label">Vulneráveis</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-number" id="prioritarios">0</div>
-        <div class="stat-label">Prioritários</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-number" id="protocolos">0</div>
-        <div class="stat-label">Protocolos Gerenciados</div>
-        <div class="stat-sub" id="protocolos-sub">Sepse 0 · AVC 0 · Dor Torácica 0</div>
-      </div>
+    <div class="stats-slim">
+      <div class="stat-pill"><span class="stat-pill-num" id="total-pacientes">0</span><span class="stat-pill-label">Total</span></div>
+      <div class="stat-pill"><span class="stat-pill-num" id="vulneraveis">0</span><span class="stat-pill-label">Vulneráveis</span></div>
+      <div class="stat-pill"><span class="stat-pill-num" id="prioritarios">0</span><span class="stat-pill-label">Prioritários</span></div>
+      <div class="stat-pill" title="Sepse · AVC · Dor Torácica"><span class="stat-pill-num" id="protocolos">0</span><span class="stat-pill-label">Protocolos <span class="stat-pill-sub" id="protocolos-sub">(0·0·0)</span></span></div>
+      <div class="stat-pill overdue-pill" id="vencidos-pill" style="display:none;"><span class="stat-pill-num" id="vencidos-num">0</span><span class="stat-pill-label">SLA vencidos</span></div>
     </div>
 
-    <div class="btn-group">
+    <div class="controls">
       <button class="btn" onclick="abrirModal()">+ Novo Paciente</button>
       <button class="btn btn-secondary" id="btn-view" onclick="alternarView()">📥 Ver Arquivados</button>
+      <input type="text" id="busca" class="busca-input" placeholder="🔍 Buscar por nome ou nº de atendimento" oninput="onBusca(this.value)">
+      <div class="filtros">
+        <button class="filtro-btn active" data-f="todos" onclick="setFiltro('todos', this)">Todos</button>
+        <button class="filtro-btn" data-f="protocolo" onclick="setFiltro('protocolo', this)">Protocolos</button>
+        <button class="filtro-btn" data-f="vulneravel" onclick="setFiltro('vulneravel', this)">Vulneráveis</button>
+        <button class="filtro-btn" data-f="prioritario" onclick="setFiltro('prioritario', this)">Prioritários</button>
+      </div>
+      <button class="btn-icon" id="btn-tema" onclick="alternarTema()" title="Alternar tema claro/escuro">🌙</button>
     </div>
 
     <div id="modal" class="modal">
       <div class="modal-content">
         <button class="modal-close" onclick="fecharModal()">×</button>
-        <h2 style="margin-bottom: 1.5rem; color: #0066cc;">Adicionar Paciente</h2>
+        <h2 id="modal-titulo" style="margin-bottom: 1.5rem; color: #0066cc;">Adicionar Paciente</h2>
 
-        <form onsubmit="adicionarPaciente(event)">
+        <form onsubmit="salvarPaciente(event)">
           <div class="form-group">
             <label>Nome Completo *</label>
             <input type="text" id="nome" placeholder="Ex: João Silva" required>
@@ -1044,6 +1156,8 @@
 
     <div id="lista-pacientes"></div>
   </div>
+
+  <div id="toast" class="toast"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -1198,8 +1312,34 @@
       return `${hora}:${minuto}`;
     }
 
-    function abrirModal() {
+    let editandoId = null;
+
+    function abrirModal(id) {
+      editandoId = (typeof id !== 'undefined') ? id : null;
       selCriterios = { vuln: {}, prio: {}, proto: {} };
+
+      const titulo = document.getElementById('modal-titulo');
+      const btn = document.getElementById('btn-submit');
+
+      if (editandoId != null) {
+        const p = pacientes.find(x => x.id === editandoId);
+        if (p) {
+          document.getElementById('nome').value = p.nome || '';
+          document.getElementById('dataNascimento').value = p.dataNascimento || '';
+          document.getElementById('numeroAtendimento').value = p.numeroAtendimento || '';
+          document.getElementById('obs').value = p.obs || '';
+          (p.flagsVuln || []).forEach(f => selCriterios.vuln[f] = true);
+          (p.flagsPrio || []).forEach(f => { if (f !== 'idoso_60' && f !== 'idoso_80') selCriterios.prio[f] = true; });
+          (p.flagsProto || []).forEach(f => selCriterios.proto[f] = true);
+          mostrarIdade();
+          titulo.textContent = 'Editar Paciente';
+          btn.textContent = 'Salvar alterações';
+        }
+      } else {
+        titulo.textContent = 'Adicionar Paciente';
+        btn.textContent = 'Adicionar Paciente';
+      }
+
       renderChips();
       document.getElementById('modal').classList.add('show');
     }
@@ -1211,6 +1351,7 @@
       document.getElementById('numeroAtendimento').value = '';
       document.getElementById('obs').value = '';
       document.getElementById('idade-display').style.display = 'none';
+      editandoId = null;
       selCriterios = { vuln: {}, prio: {}, proto: {} };
       renderChips();
     }
@@ -1262,7 +1403,7 @@
       montaGrupo(grupo);
     }
 
-    function adicionarPaciente(event) {
+    function salvarPaciente(event) {
       event.preventDefault();
 
       const nome = document.getElementById('nome').value;
@@ -1279,27 +1420,43 @@
       if (idade >= 80) { if (!flagsPrio.includes('idoso_80')) flagsPrio.push('idoso_80'); }
       else if (idade >= 60) { if (!flagsPrio.includes('idoso_60')) flagsPrio.push('idoso_60'); }
 
-      const paciente = {
-        id: Date.now(),
-        nome,
-        dataNascimento,
-        numeroAtendimento,
-        idade,
-        obs,
-        flagsVuln,
-        flagsPrio,
-        flagsProto,
-        criacao: new Date().toISOString(),
-        primeiro: null,
-        segundo: null,
-        arquivado: false,
-        arquivadoEm: null,
-        checklist: {}
-      };
-
-      pacientes.unshift(paciente);
-      salvarDados();
-      sbUpsert(paciente);
+      if (editandoId != null) {
+        // Edição: atualiza campos, preserva cronômetros, checklist e status
+        const p = pacientes.find(x => x.id === editandoId);
+        if (p) {
+          p.nome = nome;
+          p.dataNascimento = dataNascimento;
+          p.numeroAtendimento = numeroAtendimento;
+          p.idade = idade;
+          p.obs = obs;
+          p.flagsVuln = flagsVuln;
+          p.flagsPrio = flagsPrio;
+          p.flagsProto = flagsProto;
+          salvarDados();
+          sbUpsert(p);
+        }
+      } else {
+        const paciente = {
+          id: Date.now(),
+          nome,
+          dataNascimento,
+          numeroAtendimento,
+          idade,
+          obs,
+          flagsVuln,
+          flagsPrio,
+          flagsProto,
+          criacao: new Date().toISOString(),
+          primeiro: null,
+          segundo: null,
+          arquivado: false,
+          arquivadoEm: null,
+          checklist: {}
+        };
+        pacientes.unshift(paciente);
+        salvarDados();
+        sbUpsert(paciente);
+      }
 
       fecharModal();
       renderizarPacientes();
@@ -1354,13 +1511,48 @@
       renderizarPacientes();
     }
 
+    let removidoBackup = null;
+    let removidoTimer = null;
+
     function removerPaciente(id) {
-      if (confirm('Remover paciente definitivamente? (use "Arquivar" se quiser manter para análise)')) {
-        pacientes = pacientes.filter(p => p.id !== id);
-        salvarDados();
-        sbDelete(id);
-        renderizarPacientes();
-      }
+      const p = pacientes.find(x => x.id === id);
+      if (!p) return;
+      removidoBackup = p;
+      pacientes = pacientes.filter(x => x.id !== id);
+      salvarDados();
+      renderizarPacientes();
+      mostrarToast(`Paciente "${p.nome}" removido`, 'Desfazer', desfazerRemover);
+      clearTimeout(removidoTimer);
+      removidoTimer = setTimeout(() => {
+        if (removidoBackup && removidoBackup.id === id) {
+          sbDelete(id);
+          removidoBackup = null;
+        }
+      }, 6000);
+    }
+
+    function desfazerRemover() {
+      if (!removidoBackup) return;
+      pacientes.unshift(removidoBackup);
+      salvarDados();
+      sbUpsert(removidoBackup);
+      removidoBackup = null;
+      clearTimeout(removidoTimer);
+      esconderToast();
+      renderizarPacientes();
+    }
+
+    function mostrarToast(msg, actionLabel, actionFn) {
+      const el = document.getElementById('toast');
+      el.innerHTML = `<span>${msg}</span>` + (actionLabel ? `<button id="toast-act">${actionLabel}</button>` : '');
+      el.classList.add('show');
+      if (actionLabel) document.getElementById('toast-act').onclick = actionFn;
+      clearTimeout(el._t);
+      el._t = setTimeout(esconderToast, 6000);
+    }
+
+    function esconderToast() {
+      document.getElementById('toast').classList.remove('show');
     }
 
     function salvarDados() {
@@ -1510,10 +1702,18 @@
       const nSepse = visiveis.filter(p => (p.flagsProto || []).includes('sepse')).length;
       const nAvc = visiveis.filter(p => (p.flagsProto || []).includes('avc')).length;
       const nDor = visiveis.filter(p => (p.flagsProto || []).includes('dor_toracica')).length;
-      const total = nSepse + nAvc + nDor;
 
-      document.getElementById('protocolos').textContent = total;
-      document.getElementById('protocolos-sub').textContent = `Sepse ${nSepse} · AVC ${nAvc} · Dor Torácica ${nDor}`;
+      document.getElementById('protocolos').textContent = nSepse + nAvc + nDor;
+      document.getElementById('protocolos-sub').textContent = `(${nSepse}·${nAvc}·${nDor})`;
+
+      // Contador de SLAs vencidos (só ativos, reavaliação em aberto e no vermelho)
+      const vencidos = pacientes.filter(p => !p.arquivado && !p.segundo).filter(p => {
+        const fa = faseAtiva(p);
+        return fa.fase !== 0 && (fa.limite - fa.dec) < 0;
+      }).length;
+      const pill = document.getElementById('vencidos-pill');
+      document.getElementById('vencidos-num').textContent = vencidos;
+      pill.style.display = vencidos > 0 ? 'flex' : 'none';
     }
 
     // #8 — renderiza um bundle para CADA protocolo marcado (checklist com horário e cor por prazo)
@@ -1528,6 +1728,7 @@
       return protos.map(proto => {
         const itens = PROTOCOLO_CHECKLIST[proto] || [];
         if (!itens.length) return '';
+        const feitos = itens.filter(it => chk[it.id]).length;
 
         const linhas = itens.map(it => {
           const ts = chk[it.id];
@@ -1558,27 +1759,196 @@
 
         return `
           <div class="bundle">
-            <div class="bundle-title">🎯 Bundle ${LABEL[proto] || proto} — meta ${sla.first}min</div>
+            <div class="bundle-title">🎯 Bundle ${LABEL[proto] || proto} — ${feitos}/${itens.length} · meta ${sla.first}min</div>
             ${linhas}
           </div>`;
       }).join('');
     }
 
+    // ===== Fase ativa da reavaliação (para o anel/cronômetro único) =====
+    function faseAtiva(p) {
+      const sla = getSLA(p);
+      const agora = Date.now();
+      if (!p.primeiro) {
+        return { fase: 1, dec: Math.floor((agora - new Date(p.criacao)) / 1000), limite: sla.first * 60, label: '1ª reav' };
+      }
+      if (!p.segundo) {
+        return { fase: 2, dec: Math.floor((agora - new Date(p.primeiro)) / 1000), limite: sla.second * 60, label: '2ª reav' };
+      }
+      return { fase: 0, dec: 0, limite: 1, label: 'Concluído' };
+    }
+
+    // Cor da faixa lateral por urgência
+    function corUrgencia(p) {
+      if ((p.flagsProto || []).length) return '#dc2626';
+      if ((p.flagsVuln || []).length) return '#1d4ed8';
+      if ((p.flagsPrio || []).length) return '#0891b2';
+      return '#94a3b8';
+    }
+
+    // Segundos restantes da fase ativa (negativo = vencido); completos vão pro fim
+    function restanteAtivo(p) {
+      const fa = faseAtiva(p);
+      if (fa.fase === 0) return Infinity;
+      return fa.limite - fa.dec;
+    }
+
+    function ordenarUrgencia(a, b) {
+      const ca = a.segundo ? 1 : 0, cb = b.segundo ? 1 : 0;
+      if (ca !== cb) return ca - cb;                 // concluídos por último
+      return restanteAtivo(a) - restanteAtivo(b);    // menos tempo (ou vencido) primeiro
+    }
+
+    // Anel de contagem (cronômetro único da fase ativa)
+    function renderRing(p) {
+      const fa = faseAtiva(p);
+      const circ = 226.19; // 2*pi*36
+      if (fa.fase === 0) {
+        return `
+          <div class="ring-wrap">
+            <svg width="88" height="88" viewBox="0 0 88 88">
+              <circle class="ring-track" cx="44" cy="44" r="36" fill="none" stroke-width="8"/>
+              <circle cx="44" cy="44" r="36" fill="none" stroke="#16a34a" stroke-width="8" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="0" transform="rotate(-90 44 44)"/>
+            </svg>
+            <div class="ring-center">
+              <div class="ring-time" style="color:#16a34a;">✓</div>
+              <div class="ring-label">Concluído</div>
+            </div>
+          </div>`;
+      }
+      const frac = Math.min(fa.dec / fa.limite, 1);
+      const cor = frac >= 1 ? '#dc2626' : frac >= 0.8 ? '#d97706' : '#16a34a';
+      const offset = circ * (1 - frac);
+      return `
+        <div class="ring-wrap">
+          <svg width="88" height="88" viewBox="0 0 88 88">
+            <circle class="ring-track" cx="44" cy="44" r="36" fill="none" stroke-width="8"/>
+            <circle cx="44" cy="44" r="36" fill="none" stroke="${cor}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${offset}" transform="rotate(-90 44 44)"/>
+          </svg>
+          <div class="ring-center">
+            <div class="ring-time" style="color:${cor};">${formatarTempo(fa.dec)}</div>
+            <div class="ring-label">${fa.label}</div>
+          </div>
+        </div>`;
+    }
+
+    // Descrição textual das duas reavaliações
+    function reavDesc(p) {
+      const sla = getSLA(p);
+      const t1 = tempoDecorrido(p, 'primeira');
+      const t2 = p.primeiro ? tempoDecorrido(p, 'segunda') : 0;
+
+      let l1;
+      if (p.primeiro) {
+        l1 = (t1 > sla.first * 60)
+          ? `<span class="reav-late">✓ com atraso +${formatarTempo(t1 - sla.first * 60)}</span>`
+          : `<span class="reav-ok">✓ em ${formatarTempo(t1)}</span>`;
+      } else {
+        l1 = (t1 > sla.first * 60)
+          ? `<span class="reav-late">em aberto — atrasada +${formatarTempo(t1 - sla.first * 60)}</span>`
+          : `<span class="reav-run">em andamento — ${formatarTempo(t1)}</span>`;
+      }
+
+      let l2;
+      if (!p.primeiro) {
+        l2 = `<span class="reav-wait">aguardando 1ª</span>`;
+      } else if (p.segundo) {
+        l2 = (t2 > sla.second * 60)
+          ? `<span class="reav-late">✓ com atraso +${formatarTempo(t2 - sla.second * 60)}</span>`
+          : `<span class="reav-ok">✓ em ${formatarTempo(t2)}</span>`;
+      } else {
+        l2 = (t2 > sla.second * 60)
+          ? `<span class="reav-late">em aberto — atrasada +${formatarTempo(t2 - sla.second * 60)}</span>`
+          : `<span class="reav-run">em andamento — ${formatarTempo(t2)}</span>`;
+      }
+
+      return `
+        <div class="reav-desc">
+          <div class="reav-line"><b>1ª (${sla.first}min):</b> ${l1}</div>
+          <div class="reav-line"><b>2ª (${sla.second}min):</b> ${l2}</div>
+        </div>`;
+    }
+
+    // ===== Busca e filtro =====
+    let filtro = 'todos';
+    let termoBusca = '';
+
+    function passaFiltro(p) {
+      if (filtro === 'protocolo') return (p.flagsProto || []).length > 0;
+      if (filtro === 'vulneravel') return (p.flagsVuln || []).length > 0;
+      if (filtro === 'prioritario') return (p.flagsPrio || []).length > 0;
+      return true;
+    }
+
+    function passaBusca(p) {
+      if (!termoBusca) return true;
+      const t = termoBusca.toLowerCase();
+      return (p.nome || '').toLowerCase().includes(t) || (p.numeroAtendimento || '').toLowerCase().includes(t);
+    }
+
+    function setFiltro(f, btn) {
+      filtro = f;
+      document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderizarPacientes();
+    }
+
+    function onBusca(v) {
+      termoBusca = (v || '').trim();
+      renderizarPacientes();
+    }
+
+    // ===== Tema claro/escuro =====
+    function aplicarTema(t) {
+      const btn = document.getElementById('btn-tema');
+      if (t === 'dark') {
+        document.body.classList.add('dark');
+        if (btn) btn.textContent = '☀️';
+      } else {
+        document.body.classList.remove('dark');
+        if (btn) btn.textContent = '🌙';
+      }
+    }
+
+    function alternarTema() {
+      const novo = document.body.classList.contains('dark') ? 'light' : 'dark';
+      try { localStorage.setItem('pulse-tema', novo); } catch (e) {}
+      aplicarTema(novo);
+    }
+
+    // ===== Relógio do header =====
+    function atualizarRelogio() {
+      const el = document.getElementById('relogio');
+      if (!el) return;
+      const d = new Date();
+      el.textContent =
+        String(d.getHours()).padStart(2, '0') + ':' +
+        String(d.getMinutes()).padStart(2, '0') + ':' +
+        String(d.getSeconds()).padStart(2, '0');
+    }
+
     function renderizarPacientes() {
       const container = document.getElementById('lista-pacientes');
-      const lista = pacientes.filter(p => viewArquivados ? p.arquivado : !p.arquivado);
+      let lista = pacientes
+        .filter(p => viewArquivados ? p.arquivado : !p.arquivado)
+        .filter(passaFiltro)
+        .filter(passaBusca);
 
       if (lista.length === 0) {
-        const msg = viewArquivados
-          ? '<div class="empty"><div class="empty-icon">📥</div><p>Nenhum paciente arquivado</p><p style="font-size: 12px; color: #999;">Pacientes arquivados aparecem aqui para consulta e análise</p></div>'
-          : '<div class="empty"><div class="empty-icon">📋</div><p>Nenhum paciente registrado</p><p style="font-size: 12px; color: #999;">Clique em "+ Novo Paciente" para começar</p></div>';
+        let msg;
+        if (viewArquivados) {
+          msg = '<div class="empty"><div class="empty-icon">📥</div><p>Nenhum paciente arquivado</p><p style="font-size: 12px; color: #999;">Pacientes arquivados aparecem aqui para consulta e análise</p></div>';
+        } else if (termoBusca || filtro !== 'todos') {
+          msg = '<div class="empty"><div class="empty-icon">🔍</div><p>Nenhum paciente encontrado</p><p style="font-size: 12px; color: #999;">Ajuste a busca ou o filtro</p></div>';
+        } else {
+          msg = '<div class="empty"><div class="empty-icon">📋</div><p>Nenhum paciente registrado</p><p style="font-size: 12px; color: #999;">Clique em "+ Novo Paciente" para começar</p></div>';
+        }
         container.innerHTML = msg;
         atualizarStats();
         return;
       }
 
       if (viewArquivados) {
-        // #3 — arquivados agrupados por data de inclusão (dia do atendimento), mais recentes primeiro
         const grupos = {};
         lista.forEach(p => {
           const dia = p.criacao ? formatarData(p.criacao) : 'Sem data';
@@ -1599,7 +1969,8 @@
           </div>
         `).join('');
       } else {
-        container.innerHTML = '<div class="patient-grid">' + lista.map(renderCard).join('') + '</div>';
+        const ordenada = lista.slice().sort(ordenarUrgencia);
+        container.innerHTML = '<div class="patient-grid">' + ordenada.map(renderCard).join('') + '</div>';
       }
 
       atualizarStats();
@@ -1607,20 +1978,6 @@
 
     // Monta o HTML de um card de paciente (reutilizado nas visões ativa e arquivada)
     function renderCard(p) {
-      const sla = getSLA(p);
-      const tempo1 = tempoDecorrido(p, 'primeira');
-      const tempo2 = p.primeiro ? tempoDecorrido(p, 'segunda') : 0;
-
-      const status1 = statusAvaliacao(p, 'primeira');
-      const status2 = statusAvaliacao(p, 'segunda');
-
-      // #1 — determina se a reavaliação foi concluída dentro ou fora do prazo
-      const feita1Atraso = p.primeiro && tempo1 > sla.first * 60;
-      const feita2Atraso = p.segundo && tempo2 > sla.second * 60;
-
-      const atrasada1 = !p.primeiro && tempo1 > sla.first * 60;
-      const atrasada2 = p.primeiro && !p.segundo && tempo2 > sla.second * 60;
-
       const dataNascFormatada = p.dataNascimento ? formatarData(p.dataNascimento) : 'Data não informada';
       const idadeCard = (typeof p.idade === 'number' && !isNaN(p.idade))
         ? p.idade
@@ -1628,7 +1985,6 @@
       const idadeRotulo = (idadeCard != null && idadeCard >= 0) ? ` (${idadeCard} ${idadeCard === 1 ? 'ano' : 'anos'})` : '';
       const dataInclusaoFormatada = p.criacao ? formatarDataHora(p.criacao) : 'Data não informada';
 
-      // Badges (um por protocolo + Vulnerável + Prioritário, todos que existirem)
       const fProto = p.flagsProto || [];
       const fVuln = p.flagsVuln || [];
       const fPrio = p.flagsPrio || [];
@@ -1638,25 +1994,16 @@
       if (fPrio.length) badgesHtml += `<span class="badge badge-prioritario">Prioritário</span>`;
       if (!badgesHtml) badgesHtml = `<span class="badge badge-padrao">Padrão</span>`;
 
-      // Linha de critérios marcados (detalhe para leitura e auditoria)
       const partes = [];
       if (fProto.length) partes.push('Protocolo: ' + fProto.map(id => LABEL[id] || id).join(', '));
       if (fVuln.length) partes.push('Vulnerabilidade: ' + fVuln.map(id => LABEL[id] || id).join(', '));
       if (fPrio.length) partes.push('Prioridade: ' + fPrio.map(id => LABEL[id] || id).join(', '));
       const criteriosHtml = partes.length ? `<div class="criterios-text">${partes.join(' • ')}</div>` : '';
 
-      // classe da 1ª caixa
-      let box1cls = '';
-      if (p.primeiro) box1cls = feita1Atraso ? 'done-late' : 'done-ok';
-      else box1cls = status1 === 'overdue' ? 'overdue' : status1 === 'warning' ? 'warning' : '';
-
-      // classe da 2ª caixa
-      let box2cls = '';
-      if (p.segundo) box2cls = feita2Atraso ? 'done-late' : 'done-ok';
-      else if (p.primeiro) box2cls = status2 === 'overdue' ? 'overdue' : status2 === 'warning' ? 'warning' : '';
+      const cor = corUrgencia(p);
 
       return `
-          <div class="patient-card ${p.arquivado ? 'arquivada' : ''}">
+          <div class="patient-card ${p.arquivado ? 'arquivada' : ''}" style="border-left: 7px solid ${cor};">
             <div class="patient-header">
               <div class="patient-info">
                 <h3>${p.nome}</h3>
@@ -1670,30 +2017,9 @@
               <div class="badges">${badgesHtml}</div>
             </div>
 
-            <div class="sla-container">
-              <div class="sla-box ${box1cls}">
-                <div class="sla-label">1ª Reavaliação (${sla.first}min) ${p.primeiro ? '✓' : ''}</div>
-                <div class="sla-time">${formatarTempo(tempo1)}</div>
-                ${p.primeiro
-                  ? (feita1Atraso
-                      ? `<div class="done-late-msg">Realizada com atraso: +${formatarTempo(tempo1 - sla.first * 60)}</div>`
-                      : `<div class="done-ok-msg">Realizada em ${formatarTempo(tempo1)}</div>`)
-                  : (atrasada1 ? `<div class="overdue-msg">ATRASADO: +${formatarTempo(tempo1 - sla.first * 60)}</div>` : '')}
-              </div>
-
-              <div class="sla-box ${box2cls}">
-                <div class="sla-label">2ª Reavaliação (${sla.second}min) ${p.segundo ? '✓' : ''}</div>
-                ${p.primeiro ? `
-                  <div class="sla-time">${formatarTempo(tempo2)}</div>
-                  ${p.segundo
-                    ? (feita2Atraso
-                        ? `<div class="done-late-msg">Realizada com atraso: +${formatarTempo(tempo2 - sla.second * 60)}</div>`
-                        : `<div class="done-ok-msg">Realizada em ${formatarTempo(tempo2)}</div>`)
-                    : (atrasada2 ? `<div class="overdue-msg">ATRASADO: +${formatarTempo(tempo2 - sla.second * 60)}</div>` : '')}
-                ` : `
-                  <div style="color: #4a7ba7; font-size: 12px; font-style: italic;">Aguardando 1ª avaliação</div>
-                `}
-              </div>
+            <div class="reav-block">
+              ${renderRing(p)}
+              ${reavDesc(p)}
             </div>
 
             ${renderBundle(p)}
@@ -1706,6 +2032,7 @@
                 ${!p.primeiro ? `<button class="btn-action btn-check" onclick="marcarAvaliacao(${p.id}, 'primeira')">✓ Registrar 1ª reav.</button>` : ''}
                 ${p.primeiro && !p.segundo ? `<button class="btn-action btn-check" onclick="marcarAvaliacao(${p.id}, 'segunda')">✓ Registrar 2ª reav.</button>` : ''}
                 ${p.segundo ? `<button class="btn-action btn-done" disabled>✓ Completo</button>` : ''}
+                <button class="btn-action btn-edit" onclick="abrirModal(${p.id})">✏️ Editar</button>
                 <button class="btn-action btn-archive" onclick="arquivarPaciente(${p.id})">📥 Arquivar</button>
                 <button class="btn-action btn-remove" onclick="removerPaciente(${p.id})">✕ Remover</button>
               `}
@@ -1848,6 +2175,11 @@
 
     // Começa bloqueado até autenticar
     document.body.classList.add('nao-logado');
+
+    // Tema salvo + relógio
+    try { aplicarTema(localStorage.getItem('pulse-tema') || 'light'); } catch (e) {}
+    atualizarRelogio();
+    setInterval(atualizarRelogio, 1000);
 
     initApp();
 
