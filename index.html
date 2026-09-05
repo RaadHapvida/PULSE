@@ -1364,6 +1364,10 @@
       const atrasada2 = p.primeiro && !p.segundo && tempo2 > sla.second * 60;
 
       const dataNascFormatada = p.dataNascimento ? formatarData(p.dataNascimento) : 'Data não informada';
+      const idadeCard = (typeof p.idade === 'number' && !isNaN(p.idade))
+        ? p.idade
+        : (p.dataNascimento ? calcularIdade(p.dataNascimento) : null);
+      const idadeRotulo = (idadeCard != null && idadeCard >= 0) ? ` (${idadeCard} ${idadeCard === 1 ? 'ano' : 'anos'})` : '';
       const dataInclusaoFormatada = p.criacao ? formatarDataHora(p.criacao) : 'Data não informada';
 
       // classe da 1ª caixa
@@ -1381,7 +1385,7 @@
             <div class="patient-header">
               <div class="patient-info">
                 <h3>${p.nome}</h3>
-                <p>Nasc: ${dataNascFormatada} • ${p.queixa.substring(0, 50)}${p.queixa.length > 50 ? '...' : ''}</p>
+                <p>Nasc: ${dataNascFormatada}${idadeRotulo} • ${p.queixa.substring(0, 50)}${p.queixa.length > 50 ? '...' : ''}</p>
                 ${p.numeroAtendimento ? `<p style="font-size: 12px; color: #0066cc; font-weight: 600; margin-top: 0.25rem;">Nº Atendimento: ${p.numeroAtendimento}</p>` : ''}
                 <p style="font-size: 11px; color: #888; margin-top: 0.25rem;">📋 Inclusão: ${dataInclusaoFormatada}</p>
                 ${p.arquivado && p.arquivadoEm ? `<p style="font-size: 11px; color: #64748b; font-weight: 600; margin-top: 0.25rem;">📥 Arquivado: ${formatarDataHora(p.arquivadoEm)}</p>` : ''}
