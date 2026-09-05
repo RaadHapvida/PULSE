@@ -91,6 +91,131 @@
       display: inline-block;
     }
 
+    .user-badge {
+      margin-top: 0.5rem;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .user-badge .user-email {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+    }
+
+    .btn-logout {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-logout:hover {
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    /* Tela de login */
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #0066cc 0%, #003d99 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 1rem;
+    }
+
+    .login-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .login-logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .login-card h2 {
+      color: #0066cc;
+      font-size: 26px;
+      margin-bottom: 0.25rem;
+      text-align: center;
+    }
+
+    .login-card .login-sub {
+      text-align: center;
+      color: #4a7ba7;
+      font-size: 13px;
+      margin-bottom: 1.75rem;
+    }
+
+    .login-card label {
+      display: block;
+      font-weight: 600;
+      font-size: 13px;
+      color: #0066cc;
+      margin-bottom: 0.4rem;
+    }
+
+    .login-card input {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid #b3d9ff;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 1.1rem;
+      font-family: inherit;
+    }
+
+    .login-card input:focus {
+      outline: none;
+      border-color: #0066cc;
+      box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+    }
+
+    .login-btn {
+      width: 100%;
+      background: #0066cc;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .login-btn:hover { background: #004999; }
+    .login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .login-error {
+      background: #fef2f2;
+      color: #991b1b;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .login-error.show { display: block; }
+
+    body.nao-logado .container { display: none; }
+
     .btn-group {
       margin-bottom: 2rem;
       display: flex;
@@ -771,6 +896,33 @@
   </style>
 </head>
 <body>
+  <div id="login-overlay" class="login-overlay">
+    <div class="login-card">
+      <div class="login-logo">
+        <svg width="72" height="72" viewBox="0 0 100 100" role="img" aria-label="Logo PULSE">
+          <defs>
+            <linearGradient id="pulseHeartGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#1a74d6"/>
+              <stop offset="1" stop-color="#003d99"/>
+            </linearGradient>
+          </defs>
+          <path d="M50,86 C20,64 6,44 6,27 C6,14 16,7 27,7 C37,7 45,13 50,22 C55,13 63,7 73,7 C84,7 94,14 94,27 C94,44 80,64 50,86 Z" fill="url(#pulseHeartGrad)"/>
+          <polyline points="18,50 38,50 45,34 55,66 62,50 82,50" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2>PULSE</h2>
+      <div class="login-sub">Hospital São Bernardo</div>
+      <div id="login-error" class="login-error"></div>
+      <form onsubmit="fazerLogin(event)">
+        <label>E-mail</label>
+        <input type="email" id="login-email" placeholder="ps.pulse@hsb.com.br" required autocomplete="username">
+        <label>Senha</label>
+        <input type="password" id="login-senha" placeholder="••••••••" required autocomplete="current-password">
+        <button type="submit" class="login-btn" id="login-btn">Entrar</button>
+      </form>
+    </div>
+  </div>
+
   <div class="container">
     <div class="header">
       <div class="header-content">
@@ -781,6 +933,10 @@
         <span class="brand-hapvida">Hapvida</span>
         <span class="brand-hospital">Hospital São Bernardo</span>
         <div class="status-badge" id="status">Conectando...</div>
+        <div class="user-badge" id="user-badge" style="display:none;">
+          <span class="user-email" id="user-email"></span>
+          <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+        </div>
       </div>
     </div>
 
@@ -868,6 +1024,9 @@
 
     let sb = null;
     let supabaseOK = false;
+
+    // Usuário autenticado (acesso único compartilhado)
+    let usuarioAtual = null;
 
     // #3 — controla se a tela mostra pacientes ativos ou arquivados
     let viewArquivados = false;
@@ -1563,35 +1722,94 @@
       }
     }
 
-    // Tenta conectar ao Supabase; se falhar, segue no localStorage
-    async function initSupabase() {
+    // ============ AUTENTICAÇÃO ============
+    let rtInscrito = false;
+
+    function mostrarErroLogin(msg) {
+      const el = document.getElementById('login-error');
+      el.textContent = msg;
+      el.classList.add('show');
+    }
+
+    async function fazerLogin(event) {
+      event.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const senha = document.getElementById('login-senha').value;
+      const btn = document.getElementById('login-btn');
+      document.getElementById('login-error').classList.remove('show');
+      if (!sb) { mostrarErroLogin('Conexão indisponível. Recarregue a página.'); return; }
+      btn.disabled = true; btn.textContent = 'Entrando...';
       try {
-        if (!window.supabase) { console.warn('Biblioteca Supabase não carregou'); return; }
-        sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        // Teste de conexão (sintaxe correta)
-        const { error } = await sb.from('pacientes').select('id').limit(1);
+        const { error } = await sb.auth.signInWithPassword({ email, password: senha });
         if (error) {
-          console.warn('Supabase indisponível, usando localStorage:', error.message);
-          return;
+          mostrarErroLogin('E-mail ou senha inválidos.');
+          btn.disabled = false; btn.textContent = 'Entrar';
         }
+        // Em caso de sucesso, onAuthStateChange assume daqui
+      } catch (e) {
+        mostrarErroLogin('Não foi possível entrar. Tente novamente.');
+        btn.disabled = false; btn.textContent = 'Entrar';
+      }
+    }
 
-        supabaseOK = true;
-        document.getElementById('status').textContent = '🟢 Conectado (Supabase)';
+    async function fazerLogout() {
+      if (sb) { try { await sb.auth.signOut(); } catch (e) {} }
+    }
 
-        // Carrega dados da nuvem
-        await carregarDoSupabase();
+    async function aoLogar(user) {
+      usuarioAtual = (user && user.email) ? user.email : 'usuário';
+      document.body.classList.remove('nao-logado');
+      document.getElementById('login-overlay').style.display = 'none';
+      document.getElementById('user-badge').style.display = 'flex';
+      document.getElementById('user-email').textContent = usuarioAtual;
+      supabaseOK = true;
+      document.getElementById('status').textContent = '🟢 Conectado (Supabase)';
 
-        // Escuta mudanças de qualquer dispositivo, em tempo real
+      await carregarDoSupabase();
+
+      if (!rtInscrito) {
         sb.channel('pacientes-rt')
           .on('postgres_changes',
             { event: '*', schema: 'public', table: 'pacientes' },
             () => carregarDoSupabase()
           )
           .subscribe();
+        rtInscrito = true;
+      }
+    }
 
+    function aoDeslogar() {
+      usuarioAtual = null;
+      supabaseOK = false;
+      document.body.classList.add('nao-logado');
+      document.getElementById('login-overlay').style.display = 'flex';
+      document.getElementById('user-badge').style.display = 'none';
+      const btn = document.getElementById('login-btn');
+      btn.disabled = false; btn.textContent = 'Entrar';
+      document.getElementById('login-senha').value = '';
+    }
+
+    async function initApp() {
+      try {
+        if (!window.supabase) {
+          mostrarErroLogin('Biblioteca não carregou. Verifique a conexão e recarregue a página.');
+          return;
+        }
+        sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Reage a login/logout (inclui a sessão inicial já salva no navegador)
+        sb.auth.onAuthStateChange((_event, session) => {
+          if (session && session.user) aoLogar(session.user);
+          else aoDeslogar();
+        });
+
+        // Fallback: verifica sessão existente imediatamente
+        const { data } = await sb.auth.getSession();
+        if (data && data.session && data.session.user) aoLogar(data.session.user);
+        else aoDeslogar();
       } catch (e) {
-        console.warn('Erro ao iniciar Supabase, usando localStorage:', e);
+        console.warn('Erro ao iniciar app:', e);
+        aoDeslogar();
       }
     }
 
@@ -1599,10 +1817,10 @@
     // Compatibilidade: garante campos novos (e deriva flags de registros antigos)
     pacientes = pacientes.map(migrarPaciente);
 
-    document.getElementById('status').textContent = '🟢 Conectado (localStorage)';
+    // Começa bloqueado até autenticar
+    document.body.classList.add('nao-logado');
 
-    // Tenta subir para Supabase (se conectar, muda o status e sincroniza)
-    initSupabase();
+    initApp();
 
     // Solicitar permissão para notificações
     solicitarPermissaoNotificacao();
@@ -1613,7 +1831,7 @@
     // Verificar SLA vencido a cada 30 segundos
     setInterval(verificarSLAVencido, 30000);
 
-    // Primeira renderização e verificação
+    // Primeira renderização (fica oculta até o login)
     renderizarPacientes();
     verificarSLAVencido();
   </script>
