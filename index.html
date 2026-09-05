@@ -760,7 +760,8 @@
 
           <div class="form-group">
             <label>Data de Nascimento *</label>
-            <input type="date" id="dataNascimento" required>
+            <input type="date" id="dataNascimento" required oninput="mostrarIdade()">
+            <div id="idade-display" style="font-size: 13px; font-weight: 600; color: #0066cc; margin-top: 0.5rem; display: none;"></div>
           </div>
 
           <div class="form-group">
@@ -910,6 +911,19 @@
       document.getElementById('dataNascimento').value = '';
       document.getElementById('numeroAtendimento').value = '';
       document.getElementById('queixa').value = '';
+      document.getElementById('idade-display').style.display = 'none';
+    }
+
+    // Mostra a idade automaticamente ao preencher a data de nascimento
+    function mostrarIdade() {
+      const dn = document.getElementById('dataNascimento').value;
+      const el = document.getElementById('idade-display');
+      if (!dn) { el.style.display = 'none'; return; }
+      const idade = calcularIdade(dn);
+      if (isNaN(idade) || idade < 0 || idade > 130) { el.style.display = 'none'; return; }
+      const rotulo = idade === 1 ? '1 ano' : `${idade} anos`;
+      el.textContent = `🎂 Idade: ${rotulo}`;
+      el.style.display = 'block';
     }
 
     // #3 — alterna entre visão de ativos e arquivados
@@ -921,72 +935,77 @@
     }
 
     // ============ CLASSIFICAÇÃO ============
+    // Normaliza texto: minúsculas + remove acentos, para captar o que o médico
+    // escrever mesmo sem acento ("psiquiatrico", "confusao", "torax" etc.)
+    function normaliza(s) {
+      return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
     function classificarPaciente(nome, idade, queixa) {
-      const texto = (nome + ' ' + idade + ' ' + queixa).toLowerCase();
+      const texto = normaliza(nome + ' ' + idade + ' ' + queixa);
       const idadeNum = parseInt(idade);
+      const tem = (t) => texto.includes(normaliza(t)); // comparação sempre normalizada
 
       // ★ PALAVRAS-CHAVE DIRETAS (máxima prioridade)
-      if (texto.includes('vulnerável') || texto.includes('vulneravel')) {
+      if (tem('vulneravel')) {
         return { tipo: 'vulneravel', motivo: 'VULNERÁVEL: classificado diretamente' };
       }
 
-      if (texto.includes('prioritário') || texto.includes('prioritario')) {
+      if (tem('prioritario')) {
         return { tipo: 'prioritario', motivo: 'PRIORITÁRIO: classificado diretamente' };
       }
 
       // ★ PSIQUIÁTRICO + IDEAÇÃO/PENSAMENTO SUICIDA (VULNERÁVEL)
-      if ((texto.includes('pq') || texto.includes('psiquiátrico') || texto.includes('psiquiátrica')) &&
-          (texto.includes('ideação') || texto.includes('ideacao') || texto.includes('pensamento suicida') || texto.includes('suicida') || texto.includes('auto exterminio'))) {
+      if ((tem('pq') || tem('psiquiatric')) &&
+          (tem('ideacao') || tem('pensamento suicida') || tem('suicida') || tem('auto exterminio'))) {
         return { tipo: 'vulneravel', motivo: 'VULNERÁVEL: Paciente psiquiátrico com ideação suicida' };
       }
 
       // ★ SÓ IDEAÇÃO/PENSAMENTO SUICIDA (VULNERÁVEL)
-      if (texto.includes('ideação') || texto.includes('ideacao') || texto.includes('pensamento suicida') ||
-          texto.includes('tentativa de suicídio') || texto.includes('tentativa de auto exterminio') || texto.includes('auto exterminio') ||
-          texto.includes('risco suicida')) {
+      if (tem('ideacao') || tem('pensamento suicida') ||
+          tem('tentativa de suicidio') || tem('tentativa de auto exterminio') || tem('auto exterminio') ||
+          tem('risco suicida')) {
         return { tipo: 'vulneravel', motivo: 'VULNERÁVEL: Risco suicida/ideação suicida' };
       }
 
       // ★ SÓ PSIQUIÁTRICO (VULNERÁVEL)
-      if (texto.includes('pq') || texto.includes('psiquiátrico') || texto.includes('psiquiátrica')) {
+      if (tem('pq') || tem('psiquiatric')) {
         return { tipo: 'vulneravel', motivo: 'VULNERÁVEL: Paciente psiquiátrico' };
       }
 
-      if (texto.includes('sepse') ||
-          (texto.includes('febre') && (texto.includes('confusão') || texto.includes('desorientação'))) ||
-          (texto.includes('febre') && (texto.includes('hipotensão') || texto.includes('pressão baixa'))) ||
-          (texto.includes('febre') && texto.includes('choque'))) {
+      if (tem('sepse') ||
+          (tem('febre') && (tem('confusao') || tem('desorientacao'))) ||
+          (tem('febre') && (tem('hipotensao') || tem('pressao baixa'))) ||
+          (tem('febre') && tem('choque'))) {
         return { tipo: 'sepse', motivo: 'SEPSE: febre + confusão/hipotensão/choque' };
       }
 
-      if (texto.includes('avc') ||
-          texto.includes('acidente vascular') ||
-          (texto.includes('deficit') && texto.includes('neurológico')) ||
-          texto.includes('hemiplégia') ||
-          texto.includes('afasia') ||
-          (texto.includes('paralisia') && (texto.includes('face') || texto.includes('braço') || texto.includes('perna')))) {
+      if (tem('avc') ||
+          tem('acidente vascular') ||
+          (tem('deficit') && tem('neurologic')) ||
+          tem('hemiplegia') ||
+          tem('afasia') ||
+          (tem('paralisia') && (tem('face') || tem('braco') || tem('perna')))) {
         return { tipo: 'avc', motivo: 'AVC: deficit neurológico focal agudo' };
       }
 
-      if ((texto.includes('dor') && (texto.includes('torác') || texto.includes('peito'))) ||
-          texto.includes('dor torácica') ||
-          texto.includes('dor toracica') ||
-          texto.includes('iam') ||
-          texto.includes('infarto') ||
-          texto.includes('infarto agudo do miocárdio') ||
-          texto.includes('infarto agudo do miocardio') ||
-          texto.includes('angina') ||
-          (texto.includes('pressão') && texto.includes('peito')) ||
-          (texto.includes('aperto') && texto.includes('peito')) ||
-          (texto.includes('dor') && texto.includes('isquêmico'))) {
+      if ((tem('dor') && (tem('torac') || tem('peito'))) ||
+          tem('dor toracica') ||
+          tem('iam') ||
+          tem('infarto') ||
+          tem('infarto agudo do miocardio') ||
+          tem('angina') ||
+          (tem('pressao') && tem('peito')) ||
+          (tem('aperto') && tem('peito')) ||
+          (tem('dor') && tem('isquemic'))) {
         return { tipo: 'dor_toracica', motivo: 'DOR TORÁCICA: risco de evento isquêmico' };
       }
 
-      if (VULNERAVEIS_KEYWORDS.some(k => texto.includes(k))) {
+      if (VULNERAVEIS_KEYWORDS.some(k => texto.includes(normaliza(k)))) {
         return { tipo: 'vulneravel', motivo: 'VULNERÁVEL: paciente em situação de vulnerabilidade' };
       }
 
-      if (PRIORITARIOS_KEYWORDS.some(k => texto.includes(k)) || idadeNum >= 60) {
+      if (PRIORITARIOS_KEYWORDS.some(k => texto.includes(normaliza(k))) || idadeNum >= 60) {
         if (idadeNum >= 80) {
           return { tipo: 'prioritario', motivo: 'PRIORITÁRIO: Idoso 80+ anos (prioridade especial)' };
         }
