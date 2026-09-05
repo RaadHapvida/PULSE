@@ -618,11 +618,7 @@
       padding: 8px 12px; font-size: 16px; cursor: pointer;
     }
 
-    .header-clock {
-      font-size: 20px; font-weight: 700;
-      font-family: 'Monaco', 'Courier New', monospace;
-      margin-top: 0.4rem; letter-spacing: 1px;
-    }
+    .header-clock { display: none; }
 
     /* ===== Anel de contagem + descrição das reavaliações ===== */
     .reav-block { display: flex; align-items: center; gap: 1.1rem; margin: 1rem 0; }
@@ -639,8 +635,8 @@
     .reav-wait { color: #94a3b8; font-style: italic; }
 
     /* ===== Botão editar + toast ===== */
-    .btn-edit { background: #7c3aed; color: white; }
-    .btn-edit:hover { background: #6d28d9; }
+    .btn-edit { background: #0d9488; color: white; }
+    .btn-edit:hover { background: #0f766e; }
 
     .toast {
       position: fixed; left: 50%; bottom: 24px;
@@ -649,36 +645,44 @@
       border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.35);
       display: flex; align-items: center; gap: 1rem; z-index: 1500;
       transition: transform 0.25s; font-size: 14px; max-width: 90%;
+      visibility: hidden;
     }
-    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.show { transform: translateX(-50%) translateY(0); visibility: visible; }
     .toast button {
       background: #3b82f6; color: white; border: none;
       padding: 6px 14px; border-radius: 8px; font-weight: 600; cursor: pointer;
     }
 
-    /* ===== Modo escuro (plantão noturno) ===== */
-    body.dark { background: linear-gradient(135deg, #0f172a 0%, #111827 100%); color: #e2e8f0; }
-    body.dark .patient-card { background: #1e293b; border-color: #334155; box-shadow: none; }
-    body.dark .patient-card:hover { border-color: #3b82f6; }
-    body.dark .patient-info h3 { color: #f1f5f9; }
-    body.dark .patient-info p { color: #94a3b8; }
-    body.dark .stat-pill, body.dark .btn-icon, body.dark .filtro-btn, body.dark .busca-input { background: #1e293b; color: #e2e8f0; border-color: #334155; }
-    body.dark .stat-pill-label { color: #94a3b8; }
-    body.dark .stat-pill-num { color: #60a5fa; }
-    body.dark .filtro-btn.active { background: #2563eb; color: white; border-color: #2563eb; }
-    body.dark .bundle { background: #0f172a; border-color: #334155; }
-    body.dark .bundle-item { color: #cbd5e1; }
-    body.dark .criterios-text { background: #0f2942; color: #93c5fd; border-left-color: #3b82f6; }
-    body.dark .reav-line { color: #cbd5e1; }
-    body.dark .ring-track { stroke: #334155; }
-    body.dark .modal-content { background: #1e293b; color: #e2e8f0; }
-    body.dark .modal-content h2 { color: #60a5fa; }
-    body.dark .form-group input, body.dark .form-group textarea { background: #0f172a; color: #e2e8f0; border-color: #334155; }
-    body.dark .chip { background: #0f172a; color: #cbd5e1; border-color: #334155; }
-    body.dark .date-group-header { background: #1e293b; color: #e2e8f0; border-left-color: #64748b; }
-    body.dark .date-group-count { background: #0f172a; color: #94a3b8; }
-    body.dark .empty { background: #1e293b; border-color: #334155; }
-    body.dark .empty p { color: #94a3b8; }
+    /* ===== Modo escuro (plantão noturno) — paleta suave e legível ===== */
+    body.dark { background: #222836; color: #e6eaf0; }
+    body.dark .patient-card { background: #2b3242; border-color: #3a4256; box-shadow: none; }
+    body.dark .patient-card:hover { border-color: #5b8def; }
+    body.dark .patient-info h3 { color: #f3f5f9; }
+    body.dark .patient-info p { color: #aab4c4; }
+    body.dark .stat-pill, body.dark .btn-icon, body.dark .filtro-btn, body.dark .busca-input { background: #2b3242; color: #e6eaf0; border-color: #3a4256; }
+    body.dark .stat-pill-label { color: #aab4c4; }
+    body.dark .stat-pill-num { color: #7cb0ff; }
+    body.dark .stat-pill-sub { color: #f0a0a0; }
+    body.dark .filtro-btn.active { background: #2f6bdd; color: white; border-color: #2f6bdd; }
+    body.dark .bundle { background: #232a38; border-color: #3a4256; }
+    body.dark .bundle-title { color: #c3ccda; }
+    body.dark .bundle-item { color: #d3dae5; }
+    body.dark .bundle-item.done { background: #16351f; border-color: #2f6b3f; color: #a7f3c0; }
+    body.dark .bundle-item.late { background: #3a1c1c; border-color: #7f3a3a; color: #f6b0b0; }
+    body.dark .bundle-time.ok { color: #6ee7a0; }
+    body.dark .bundle-time.late { color: #fca5a5; }
+    body.dark .reav-line { color: #d3dae5; }
+    body.dark .reav-run { color: #7cc0ff; }
+    body.dark .reav-wait { color: #9aa5b5; }
+    body.dark .ring-track { stroke: #3a4256; }
+    body.dark .modal-content { background: #2b3242; color: #e6eaf0; }
+    body.dark .modal-content h2 { color: #7cb0ff; }
+    body.dark .form-group input, body.dark .form-group textarea { background: #232a38; color: #e6eaf0; border-color: #3a4256; }
+    body.dark .chip { background: #232a38; color: #d3dae5; border-color: #3a4256; }
+    body.dark .date-group-header { background: #2b3242; color: #e6eaf0; border-left-color: #64748b; }
+    body.dark .date-group-count { background: #232a38; color: #aab4c4; }
+    body.dark .empty { background: #2b3242; border-color: #3a4256; }
+    body.dark .empty p { color: #aab4c4; }
 
     .sla-container {
       display: grid;
@@ -800,8 +804,8 @@
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 8px;
-      padding: 0.75rem 1rem;
-      margin: 1rem 0;
+      padding: 0.55rem 0.75rem;
+      margin: 0.85rem 0;
     }
 
     .bundle-title {
@@ -810,21 +814,21 @@
       color: #334155;
       text-transform: uppercase;
       letter-spacing: 0.4px;
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.45rem;
     }
 
     .bundle-item {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.5rem 0.6rem;
+      padding: 0.4rem 0.5rem;
       border-radius: 6px;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 12.5px;
       color: #334155;
       transition: background 0.2s;
       border: 1px solid transparent;
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.25rem;
     }
 
     .bundle-item:last-child { margin-bottom: 0; }
@@ -874,8 +878,8 @@
 
     .btn-action {
       flex: 1;
-      min-width: 120px;
-      padding: 8px 12px;
+      min-width: 84px;
+      padding: 6px 8px;
       border: none;
       border-radius: 6px;
       cursor: pointer;
@@ -1076,7 +1080,6 @@
       <div class="header-brand">
         <span class="brand-hapvida">Hapvida</span>
         <span class="brand-hospital">Hospital São Bernardo</span>
-        <div class="header-clock" id="relogio">--:--:--</div>
         <div class="status-badge" id="status">Conectando...</div>
         <div class="user-badge" id="user-badge" style="display:none;">
           <span class="user-email" id="user-email"></span>
@@ -1089,7 +1092,7 @@
       <div class="stat-pill"><span class="stat-pill-num" id="total-pacientes">0</span><span class="stat-pill-label">Total</span></div>
       <div class="stat-pill"><span class="stat-pill-num" id="vulneraveis">0</span><span class="stat-pill-label">Vulneráveis</span></div>
       <div class="stat-pill"><span class="stat-pill-num" id="prioritarios">0</span><span class="stat-pill-label">Prioritários</span></div>
-      <div class="stat-pill" title="Sepse · AVC · Dor Torácica"><span class="stat-pill-num" id="protocolos">0</span><span class="stat-pill-label">Protocolos <span class="stat-pill-sub" id="protocolos-sub">(0·0·0)</span></span></div>
+      <div class="stat-pill" title="Sepse · AVC · Dor Torácica"><span class="stat-pill-num" id="protocolos">0</span><span class="stat-pill-label">Protocolos <span class="stat-pill-sub" id="protocolos-sub">· Sepse 0 · AVC 0 · Dor Torácica 0</span></span></div>
       <div class="stat-pill overdue-pill" id="vencidos-pill" style="display:none;"><span class="stat-pill-num" id="vencidos-num">0</span><span class="stat-pill-label">SLA vencidos</span></div>
     </div>
 
@@ -1704,7 +1707,7 @@
       const nDor = visiveis.filter(p => (p.flagsProto || []).includes('dor_toracica')).length;
 
       document.getElementById('protocolos').textContent = nSepse + nAvc + nDor;
-      document.getElementById('protocolos-sub').textContent = `(${nSepse}·${nAvc}·${nDor})`;
+      document.getElementById('protocolos-sub').textContent = `· Sepse ${nSepse} · AVC ${nAvc} · Dor Torácica ${nDor}`;
 
       // Contador de SLAs vencidos (só ativos, reavaliação em aberto e no vermelho)
       const vencidos = pacientes.filter(p => !p.arquivado && !p.segundo).filter(p => {
@@ -1759,7 +1762,7 @@
 
         return `
           <div class="bundle">
-            <div class="bundle-title">🎯 Bundle ${LABEL[proto] || proto} — ${feitos}/${itens.length} · meta ${sla.first}min</div>
+            <div class="bundle-title">🎯 Bundle ${LABEL[proto] || proto} — ${feitos}/${itens.length}</div>
             ${linhas}
           </div>`;
       }).join('');
@@ -1917,16 +1920,6 @@
     }
 
     // ===== Relógio do header =====
-    function atualizarRelogio() {
-      const el = document.getElementById('relogio');
-      if (!el) return;
-      const d = new Date();
-      el.textContent =
-        String(d.getHours()).padStart(2, '0') + ':' +
-        String(d.getMinutes()).padStart(2, '0') + ':' +
-        String(d.getSeconds()).padStart(2, '0');
-    }
-
     function renderizarPacientes() {
       const container = document.getElementById('lista-pacientes');
       let lista = pacientes
@@ -1995,15 +1988,9 @@
       if (!badgesHtml) badgesHtml = `<span class="badge badge-padrao">Padrão</span>`;
 
       const partes = [];
-      if (fProto.length) partes.push('Protocolo: ' + fProto.map(id => LABEL[id] || id).join(', '));
-      if (fVuln.length) partes.push('Vulnerabilidade: ' + fVuln.map(id => LABEL[id] || id).join(', '));
-      if (fPrio.length) partes.push('Prioridade: ' + fPrio.map(id => LABEL[id] || id).join(', '));
-      const criteriosHtml = partes.length ? `<div class="criterios-text">${partes.join(' • ')}</div>` : '';
-
-      const cor = corUrgencia(p);
 
       return `
-          <div class="patient-card ${p.arquivado ? 'arquivada' : ''}" style="border-left: 7px solid ${cor};">
+          <div class="patient-card ${p.arquivado ? 'arquivada' : ''}">
             <div class="patient-header">
               <div class="patient-info">
                 <h3>${p.nome}</h3>
@@ -2011,7 +1998,6 @@
                 ${p.numeroAtendimento ? `<p style="font-size: 12px; color: #0066cc; font-weight: 600; margin-top: 0.25rem;">Nº Atendimento: ${p.numeroAtendimento}</p>` : ''}
                 <p style="font-size: 11px; color: #888; margin-top: 0.25rem;">📋 Inclusão: ${dataInclusaoFormatada}</p>
                 ${p.arquivado && p.arquivadoEm ? `<p style="font-size: 11px; color: #64748b; font-weight: 600; margin-top: 0.25rem;">📥 Arquivado: ${formatarDataHora(p.arquivadoEm)}</p>` : ''}
-                ${criteriosHtml}
                 ${p.obs ? `<p class="obs-text">📝 ${p.obs}</p>` : ''}
               </div>
               <div class="badges">${badgesHtml}</div>
@@ -2176,10 +2162,8 @@
     // Começa bloqueado até autenticar
     document.body.classList.add('nao-logado');
 
-    // Tema salvo + relógio
+    // Tema salvo
     try { aplicarTema(localStorage.getItem('pulse-tema') || 'light'); } catch (e) {}
-    atualizarRelogio();
-    setInterval(atualizarRelogio, 1000);
 
     initApp();
 
