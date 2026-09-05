@@ -59,16 +59,27 @@
       margin-bottom: 0.25rem;
     }
 
+    /* #5 — hierarquia da marca: Hapvida e Hospital São Bernardo maiores e harmônicos */
     .header-brand {
       text-align: right;
       font-size: 13px;
       opacity: 0.9;
     }
 
-    .header-brand strong {
+    .header-brand .brand-hapvida {
       display: block;
-      font-size: 14px;
-      margin-bottom: 0.25rem;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      margin-bottom: 0.15rem;
+    }
+
+    .header-brand .brand-hospital {
+      display: block;
+      font-size: 16px;
+      font-weight: 600;
+      opacity: 0.95;
+      margin-bottom: 0.5rem;
     }
 
     .status-badge {
@@ -77,6 +88,7 @@
       border-radius: 20px;
       font-size: 12px;
       font-weight: 600;
+      display: inline-block;
     }
 
     .btn-group {
@@ -109,6 +121,16 @@
       opacity: 0.6;
       cursor: not-allowed;
       transform: none;
+    }
+
+    .btn-secondary {
+      background: #64748b;
+      box-shadow: 0 2px 8px rgba(100, 116, 139, 0.2);
+    }
+
+    .btn-secondary:hover {
+      background: #475569;
+      box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
     }
 
     .btn-success {
@@ -240,6 +262,12 @@
       box-shadow: 0 4px 16px rgba(0, 102, 204, 0.12);
     }
 
+    .patient-card.arquivada {
+      opacity: 0.85;
+      border-style: dashed;
+      background: #fafbfc;
+    }
+
     .patient-header {
       display: flex;
       justify-content: space-between;
@@ -292,6 +320,11 @@
       color: #0369a1;
     }
 
+    .badge-arquivado {
+      background: #e2e8f0;
+      color: #475569;
+    }
+
     .warning-text {
       background: #fef2f2;
       color: #991b1b;
@@ -326,6 +359,23 @@
       border-left-color: #dc2626;
       animation: pulse-red 2s infinite;
     }
+
+    /* #1 — reavaliação concluída DENTRO do prazo (verde fixo) */
+    .sla-box.done-ok {
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      border-left-color: #16a34a;
+    }
+
+    /* #1 — reavaliação concluída FORA do prazo: vermelho fixo, documentando o estouro */
+    .sla-box.done-late {
+      background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+      border-left-color: #dc2626;
+    }
+
+    .sla-box.done-ok .sla-label { color: #166534; }
+    .sla-box.done-late .sla-label { color: #7f1d1d; }
+    .sla-box.done-ok .sla-time { color: #16a34a; }
+    .sla-box.done-late .sla-time { color: #dc2626; }
 
     @keyframes pulse-red {
       0%, 100% {
@@ -386,14 +436,100 @@
       margin-top: 0.5rem;
     }
 
+    .done-late-msg {
+      color: #dc2626;
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 0.5rem;
+    }
+
+    .done-ok-msg {
+      color: #16a34a;
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+
+    /* #8 — Bundle / jornada do paciente (checklist do protocolo) */
+    .bundle {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0;
+    }
+
+    .bundle-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #334155;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 0.6rem;
+    }
+
+    .bundle-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.6rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #334155;
+      transition: background 0.2s;
+      border: 1px solid transparent;
+      margin-bottom: 0.35rem;
+    }
+
+    .bundle-item:last-child { margin-bottom: 0; }
+
+    .bundle-item:hover {
+      background: #eef2f7;
+    }
+
+    .bundle-item .bundle-check {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .bundle-item .bundle-label {
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .bundle-item.done {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+      color: #166534;
+    }
+
+    .bundle-item.late {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+
+    .bundle-time {
+      font-size: 11px;
+      font-weight: 700;
+      font-family: 'Monaco', 'Courier New', monospace;
+      white-space: nowrap;
+    }
+
+    .bundle-time.ok { color: #16a34a; }
+    .bundle-time.late { color: #dc2626; }
+
     .actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-wrap: wrap;
       gap: 0.5rem;
       margin-top: 1rem;
     }
 
     .btn-action {
+      flex: 1;
+      min-width: 120px;
       padding: 8px 12px;
       border: none;
       border-radius: 6px;
@@ -409,6 +545,24 @@
 
     .btn-check:hover {
       background: #15803d;
+    }
+
+    .btn-archive {
+      background: #0369a1;
+      color: white;
+    }
+
+    .btn-archive:hover {
+      background: #075985;
+    }
+
+    .btn-unarchive {
+      background: #64748b;
+      color: white;
+    }
+
+    .btn-unarchive:hover {
+      background: #475569;
     }
 
     .btn-remove {
@@ -471,6 +625,16 @@
       color: #4a7ba7;
     }
 
+    /* #7 — subdivisão dos protocolos dentro do mesmo card */
+    .stat-sub {
+      font-size: 12px;
+      font-weight: 600;
+      color: #991b1b;
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid #f1f5f9;
+    }
+
     .loading {
       text-align: center;
       padding: 2rem;
@@ -523,9 +687,8 @@
         <p>Sistema Inteligente de Triagem | Identificação de Risco em Tempo Real</p>
       </div>
       <div class="header-brand">
-        <strong>Hapvida</strong>
-        <div>Hospital São Bernardo</div>
-        <div>São Bernardo do Campo - SP</div>
+        <span class="brand-hapvida">Hapvida</span>
+        <span class="brand-hospital">Hospital São Bernardo</span>
         <div class="status-badge" id="status">Conectando...</div>
       </div>
     </div>
@@ -537,7 +700,7 @@
       </div>
       <div class="stat-box">
         <div class="stat-number" id="vulneraveis">0</div>
-        <div class="stat-label">Vulneráveis Identificados</div>
+        <div class="stat-label">Vulneráveis</div>
       </div>
       <div class="stat-box">
         <div class="stat-number" id="prioritarios">0</div>
@@ -545,12 +708,14 @@
       </div>
       <div class="stat-box">
         <div class="stat-number" id="protocolos">0</div>
-        <div class="stat-label">Protocolos Urgentes</div>
+        <div class="stat-label">Protocolos Gerenciados</div>
+        <div class="stat-sub" id="protocolos-sub">Sepse 0 · AVC 0 · Dor Torácica 0</div>
       </div>
     </div>
 
     <div class="btn-group">
       <button class="btn" onclick="abrirModal()">+ Novo Paciente</button>
+      <button class="btn btn-secondary" id="btn-view" onclick="alternarView()">📥 Ver Arquivados</button>
     </div>
 
     <div id="modal" class="modal">
@@ -584,7 +749,7 @@
             <div style="font-size: 11px; color: #1e40af; line-height: 1.5;">
               • <strong>Vulnerável:</strong> Idoso sozinho, sem moradia, deficiência, situação pobreza, imigrante, vítima de violência, criança em risco, transtorno mental, paciente psiquiátrico (PQ), ideação suicida<br>
               • <strong>Prioritário:</strong> Deficiência, TEA, 60+, gestante, lactante, mobilidade reduzida, obesidade<br>
-              • <strong>Protocolo urgente:</strong> Sepse (febre+confusão), AVC (déficit neurológico), Dor torácica
+              • <strong>Protocolo gerenciado:</strong> Sepse (febre+confusão), AVC (déficit neurológico), Dor torácica
             </div>
           </div>
 
@@ -604,6 +769,9 @@
 
     let sb = null;
     let supabaseOK = false;
+
+    // #3 — controla se a tela mostra pacientes ativos ou arquivados
+    let viewArquivados = false;
 
     // Carrega do localStorage primeiro (funciona mesmo sem internet / Supabase)
     let pacientes = JSON.parse(localStorage.getItem('pacientes')) || [];
@@ -646,17 +814,35 @@
       padrao: { first: 120, second: 240 }
     };
 
+    // #8 — itens obrigatórios do bundle de cada protocolo gerenciado
+    const PROTOCOLO_CHECKLIST = {
+      sepse: [
+        { id: 'antibiotico', label: 'Antibiótico' },
+        { id: 'lab', label: 'Exames laboratoriais' }
+      ],
+      dor_toracica: [
+        { id: 'ecg', label: 'Eletrocardiograma (ECG)' },
+        { id: 'rx_torax', label: 'Raio-X de tórax' },
+        { id: 'troponina', label: 'Troponina' }
+      ],
+      avc: [
+        { id: 'neuroimagem', label: 'Neuroimagem' }
+      ]
+    };
+
+    const PROTOCOLOS_URGENTES = ['sepse', 'avc', 'dor_toracica'];
+
     // ============ FUNÇÕES BÁSICAS ============
     function calcularIdade(dataNascimento) {
       const hoje = new Date();
       const nasc = new Date(dataNascimento);
       let idade = hoje.getFullYear() - nasc.getFullYear();
       const mes = hoje.getMonth() - nasc.getMonth();
-      
+
       if (mes < 0 || (mes === 0 && hoje.getDate() < nasc.getDate())) {
         idade--;
       }
-      
+
       return idade;
     }
 
@@ -678,6 +864,13 @@
       return `${dia}/${mes}/${ano} às ${hora}:${minuto}`;
     }
 
+    function formatarHora(data) {
+      const d = new Date(data);
+      const hora = String(d.getHours()).padStart(2, '0');
+      const minuto = String(d.getMinutes()).padStart(2, '0');
+      return `${hora}:${minuto}`;
+    }
+
     function abrirModal() {
       document.getElementById('modal').classList.add('show');
     }
@@ -688,6 +881,14 @@
       document.getElementById('dataNascimento').value = '';
       document.getElementById('numeroAtendimento').value = '';
       document.getElementById('queixa').value = '';
+    }
+
+    // #3 — alterna entre visão de ativos e arquivados
+    function alternarView() {
+      viewArquivados = !viewArquivados;
+      const btn = document.getElementById('btn-view');
+      btn.textContent = viewArquivados ? '📋 Ver Ativos' : '📥 Ver Arquivados';
+      renderizarPacientes();
     }
 
     // ============ CLASSIFICAÇÃO ============
@@ -711,7 +912,7 @@
       }
 
       // ★ SÓ IDEAÇÃO/PENSAMENTO SUICIDA (VULNERÁVEL)
-      if (texto.includes('ideação') || texto.includes('ideacao') || texto.includes('pensamento suicida') || 
+      if (texto.includes('ideação') || texto.includes('ideacao') || texto.includes('pensamento suicida') ||
           texto.includes('tentativa de suicídio') || texto.includes('tentativa de auto exterminio') || texto.includes('auto exterminio') ||
           texto.includes('risco suicida')) {
         return { tipo: 'vulneravel', motivo: 'VULNERÁVEL: Risco suicida/ideação suicida' };
@@ -722,14 +923,14 @@
         return { tipo: 'vulneravel', motivo: 'VULNERÁVEL: Paciente psiquiátrico' };
       }
 
-      if (texto.includes('sepse') || 
+      if (texto.includes('sepse') ||
           (texto.includes('febre') && (texto.includes('confusão') || texto.includes('desorientação'))) ||
           (texto.includes('febre') && (texto.includes('hipotensão') || texto.includes('pressão baixa'))) ||
           (texto.includes('febre') && texto.includes('choque'))) {
         return { tipo: 'sepse', motivo: 'SEPSE: febre + confusão/hipotensão/choque' };
       }
 
-      if (texto.includes('avc') || 
+      if (texto.includes('avc') ||
           texto.includes('acidente vascular') ||
           (texto.includes('deficit') && texto.includes('neurológico')) ||
           texto.includes('hemiplégia') ||
@@ -788,7 +989,10 @@
         motivo: classif.motivo,
         criacao: new Date().toISOString(),
         primeiro: null,
-        segundo: null
+        segundo: null,
+        arquivado: false,      // #3
+        arquivadoEm: null,     // #3
+        checklist: {}          // #8
       };
 
       pacientes.unshift(paciente);
@@ -810,8 +1014,46 @@
       }
     }
 
+    // #8 — marca/desmarca um item do bundle, registrando o horário
+    function marcarItem(id, itemId) {
+      const p = pacientes.find(x => x.id === id);
+      if (!p) return;
+      if (!p.checklist) p.checklist = {};
+
+      if (p.checklist[itemId]) {
+        if (!confirm('Desmarcar este item do bundle?')) return;
+        delete p.checklist[itemId];
+      } else {
+        p.checklist[itemId] = new Date().toISOString();
+      }
+      salvarDados();
+      sbUpsert(p);
+      renderizarPacientes();
+    }
+
+    // #3 — arquivar (mantém no banco para análise) vs remover (apaga de vez)
+    function arquivarPaciente(id) {
+      const p = pacientes.find(x => x.id === id);
+      if (!p) return;
+      p.arquivado = true;
+      p.arquivadoEm = new Date().toISOString();
+      salvarDados();
+      sbUpsert(p);
+      renderizarPacientes();
+    }
+
+    function desarquivarPaciente(id) {
+      const p = pacientes.find(x => x.id === id);
+      if (!p) return;
+      p.arquivado = false;
+      p.arquivadoEm = null;
+      salvarDados();
+      sbUpsert(p);
+      renderizarPacientes();
+    }
+
     function removerPaciente(id) {
-      if (confirm('Remover paciente?')) {
+      if (confirm('Remover paciente definitivamente? (use "Arquivar" se quiser manter para análise)')) {
         pacientes = pacientes.filter(p => p.id !== id);
         salvarDados();
         sbDelete(id);
@@ -842,14 +1084,15 @@
 
     function verificarSLAVencido() {
       pacientes.forEach(p => {
+        if (p.arquivado) return; // arquivados não geram alerta
         const sla = SLA_CONFIG[p.tipo] || SLA_CONFIG.padrao;
         const agora = new Date();
-        
+
         // Verificar 1ª avaliação
         if (!p.primeiro) {
           const decorrido = Math.floor((agora - new Date(p.criacao)) / 1000);
           const limiteMinutos = sla.first * 60;
-          
+
           // Notificação se passou o SLA (vermelho)
           if (decorrido > limiteMinutos && !p.notificado_primeiro) {
             enviarNotificacao(`⚠️ SLA VENCIDO: ${p.nome}`, {
@@ -860,7 +1103,7 @@
             p.notificado_primeiro = true;
             salvarDados();
           }
-          
+
           // Alerta se está faltando 5 minutos (amarelo)
           if (decorrido > limiteMinutos * 0.9 && decorrido < limiteMinutos && !p.alerta_primeiro) {
             enviarNotificacao(`⏰ SLA PRÓXIMO: ${p.nome}`, {
@@ -876,7 +1119,7 @@
         if (p.primeiro && !p.segundo) {
           const decorrido = Math.floor((agora - new Date(p.primeiro)) / 1000);
           const limiteMinutos = sla.second * 60;
-          
+
           // Notificação se passou o SLA (vermelho)
           if (decorrido > limiteMinutos && !p.notificado_segundo) {
             enviarNotificacao(`⚠️ SLA VENCIDO: ${p.nome}`, {
@@ -887,7 +1130,7 @@
             p.notificado_segundo = true;
             salvarDados();
           }
-          
+
           // Alerta se está faltando 5 minutos (amarelo)
           if (decorrido > limiteMinutos * 0.9 && decorrido < limiteMinutos && !p.alerta_segundo) {
             enviarNotificacao(`⏰ SLA PRÓXIMO: ${p.nome}`, {
@@ -954,24 +1197,81 @@
       }
     }
 
+    // #7 — contagens com subdivisão dos protocolos, respeitando a visão atual
     function atualizarStats() {
-      document.getElementById('total-pacientes').textContent = pacientes.length;
-      document.getElementById('vulneraveis').textContent = pacientes.filter(p => p.tipo === 'vulneravel').length;
-      document.getElementById('prioritarios').textContent = pacientes.filter(p => p.tipo === 'prioritario').length;
-      const protocolos = pacientes.filter(p => ['sepse', 'avc', 'dor_toracica'].includes(p.tipo)).length;
-      document.getElementById('protocolos').textContent = protocolos;
+      const visiveis = pacientes.filter(p => viewArquivados ? p.arquivado : !p.arquivado);
+
+      document.getElementById('total-pacientes').textContent = visiveis.length;
+      document.getElementById('vulneraveis').textContent = visiveis.filter(p => p.tipo === 'vulneravel').length;
+      document.getElementById('prioritarios').textContent = visiveis.filter(p => p.tipo === 'prioritario').length;
+
+      const nSepse = visiveis.filter(p => p.tipo === 'sepse').length;
+      const nAvc = visiveis.filter(p => p.tipo === 'avc').length;
+      const nDor = visiveis.filter(p => p.tipo === 'dor_toracica').length;
+      const total = nSepse + nAvc + nDor;
+
+      document.getElementById('protocolos').textContent = total;
+      document.getElementById('protocolos-sub').textContent = `Sepse ${nSepse} · AVC ${nAvc} · Dor Torácica ${nDor}`;
+    }
+
+    // #8 — renderiza o bundle do protocolo (checklist com horário e cor por prazo)
+    function renderBundle(p) {
+      if (!PROTOCOLOS_URGENTES.includes(p.tipo)) return '';
+      const itens = PROTOCOLO_CHECKLIST[p.tipo] || [];
+      if (!itens.length) return '';
+
+      const sla = SLA_CONFIG[p.tipo] || SLA_CONFIG.padrao;
+      const limiteSeg = sla.first * 60;
+      const chk = p.checklist || {};
+
+      const linhas = itens.map(it => {
+        const ts = chk[it.id];
+        let cls = '';
+        let info = '';
+
+        if (ts) {
+          const decor = Math.floor((new Date(ts) - new Date(p.criacao)) / 1000);
+          const dentro = decor <= limiteSeg;
+          cls = dentro ? 'done' : 'late';
+          const mins = Math.floor(decor / 60);
+          if (dentro) {
+            info = `<span class="bundle-time ok">✓ ${formatarHora(ts)} · ${mins}min</span>`;
+          } else {
+            const atrasoMin = Math.floor((decor - limiteSeg) / 60);
+            info = `<span class="bundle-time late">✓ ${formatarHora(ts)} · +${atrasoMin}min</span>`;
+          }
+        }
+
+        const check = ts ? '☑' : '☐';
+        return `
+          <div class="bundle-item ${cls}" onclick="marcarItem(${p.id}, '${it.id}')">
+            <span class="bundle-check">${check}</span>
+            <span class="bundle-label">${it.label}</span>
+            ${info}
+          </div>`;
+      }).join('');
+
+      return `
+        <div class="bundle">
+          <div class="bundle-title">🎯 Bundle do protocolo — meta ${sla.first}min</div>
+          ${linhas}
+        </div>`;
     }
 
     function renderizarPacientes() {
       const container = document.getElementById('lista-pacientes');
+      const lista = pacientes.filter(p => viewArquivados ? p.arquivado : !p.arquivado);
 
-      if (pacientes.length === 0) {
-        container.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><p>Nenhum paciente registrado</p><p style="font-size: 12px; color: #999;">Clique em "+ Novo Paciente" para começar</p></div>';
+      if (lista.length === 0) {
+        const msg = viewArquivados
+          ? '<div class="empty"><div class="empty-icon">📥</div><p>Nenhum paciente arquivado</p><p style="font-size: 12px; color: #999;">Pacientes arquivados aparecem aqui para consulta e análise</p></div>'
+          : '<div class="empty"><div class="empty-icon">📋</div><p>Nenhum paciente registrado</p><p style="font-size: 12px; color: #999;">Clique em "+ Novo Paciente" para começar</p></div>';
+        container.innerHTML = msg;
         atualizarStats();
         return;
       }
 
-      container.innerHTML = '<div class="patient-grid">' + pacientes.map(p => {
+      container.innerHTML = '<div class="patient-grid">' + lista.map(p => {
         const sla = SLA_CONFIG[p.tipo] || SLA_CONFIG.padrao;
         const tempo1 = tempoDecorrido(p, 'primeira');
         const tempo2 = p.primeiro ? tempoDecorrido(p, 'segunda') : 0;
@@ -979,48 +1279,79 @@
         const status1 = statusAvaliacao(p, 'primeira');
         const status2 = statusAvaliacao(p, 'segunda');
 
-        const atrasada1 = tempo1 > sla.first * 60;
-        const atrasada2 = p.primeiro && tempo2 > sla.second * 60;
+        // #1 — determina se a reavaliação foi concluída dentro ou fora do prazo
+        const feita1Atraso = p.primeiro && tempo1 > sla.first * 60;
+        const feita2Atraso = p.segundo && tempo2 > sla.second * 60;
+
+        const atrasada1 = !p.primeiro && tempo1 > sla.first * 60;
+        const atrasada2 = p.primeiro && !p.segundo && tempo2 > sla.second * 60;
 
         const dataNascFormatada = p.dataNascimento ? formatarData(p.dataNascimento) : 'Data não informada';
         const dataInclusaoFormatada = p.criacao ? formatarDataHora(p.criacao) : 'Data não informada';
 
+        // classe da 1ª caixa
+        let box1cls = '';
+        if (p.primeiro) box1cls = feita1Atraso ? 'done-late' : 'done-ok';
+        else box1cls = status1 === 'overdue' ? 'overdue' : status1 === 'warning' ? 'warning' : '';
+
+        // classe da 2ª caixa
+        let box2cls = '';
+        if (p.segundo) box2cls = feita2Atraso ? 'done-late' : 'done-ok';
+        else if (p.primeiro) box2cls = status2 === 'overdue' ? 'overdue' : status2 === 'warning' ? 'warning' : '';
+
         return `
-          <div class="patient-card">
+          <div class="patient-card ${p.arquivado ? 'arquivada' : ''}">
             <div class="patient-header">
               <div class="patient-info">
                 <h3>${p.nome}</h3>
                 <p>Nasc: ${dataNascFormatada} • ${p.queixa.substring(0, 50)}${p.queixa.length > 50 ? '...' : ''}</p>
                 ${p.numeroAtendimento ? `<p style="font-size: 12px; color: #0066cc; font-weight: 600; margin-top: 0.25rem;">Nº Atendimento: ${p.numeroAtendimento}</p>` : ''}
                 <p style="font-size: 11px; color: #888; margin-top: 0.25rem;">📋 Inclusão: ${dataInclusaoFormatada}</p>
+                ${p.arquivado && p.arquivadoEm ? `<p style="font-size: 11px; color: #64748b; font-weight: 600; margin-top: 0.25rem;">📥 Arquivado: ${formatarDataHora(p.arquivadoEm)}</p>` : ''}
                 ${p.motivo ? `<div class="warning-text">⚠️ ${p.motivo}</div>` : ''}
               </div>
               <span class="badge badge-${p.tipo}">${p.tipo.replace('_', ' ')}</span>
             </div>
 
             <div class="sla-container">
-              <div class="sla-box ${status1 === 'overdue' ? 'overdue' : status1 === 'warning' ? 'warning' : ''}">
+              <div class="sla-box ${box1cls}">
                 <div class="sla-label">1ª Reavaliação (${sla.first}min) ${p.primeiro ? '✓' : ''}</div>
-                <div class="sla-time ${p.primeiro ? '' : (status1 === 'overdue' ? 'overdue' : status1 === 'warning' ? 'warning' : '')}" ${p.primeiro ? 'style="color:#16a34a;"' : ''}>${formatarTempo(tempo1)}</div>
-                ${p.primeiro ? `<div style="font-size: 11px; color: #16a34a; font-weight: 600;">Realizada em ${formatarTempo(tempo1)}</div>` : (atrasada1 ? `<div class="overdue-msg">ATRASADO: +${formatarTempo(tempo1 - sla.first * 60)}</div>` : '')}
+                <div class="sla-time">${formatarTempo(tempo1)}</div>
+                ${p.primeiro
+                  ? (feita1Atraso
+                      ? `<div class="done-late-msg">Realizada com atraso: +${formatarTempo(tempo1 - sla.first * 60)}</div>`
+                      : `<div class="done-ok-msg">Realizada em ${formatarTempo(tempo1)}</div>`)
+                  : (atrasada1 ? `<div class="overdue-msg">ATRASADO: +${formatarTempo(tempo1 - sla.first * 60)}</div>` : '')}
               </div>
 
-              <div class="sla-box ${status2 === 'overdue' ? 'overdue' : status2 === 'warning' ? 'warning' : ''}">
+              <div class="sla-box ${box2cls}">
                 <div class="sla-label">2ª Reavaliação (${sla.second}min) ${p.segundo ? '✓' : ''}</div>
                 ${p.primeiro ? `
-                  <div class="sla-time ${p.segundo ? '' : (status2 === 'overdue' ? 'overdue' : status2 === 'warning' ? 'warning' : '')}" ${p.segundo ? 'style="color:#16a34a;"' : ''}>${formatarTempo(tempo2)}</div>
-                  ${p.segundo ? `<div style="font-size: 11px; color: #16a34a; font-weight: 600;">Realizada em ${formatarTempo(tempo2)}</div>` : (atrasada2 ? `<div class="overdue-msg">ATRASADO: +${formatarTempo(tempo2 - sla.second * 60)}</div>` : '')}
+                  <div class="sla-time">${formatarTempo(tempo2)}</div>
+                  ${p.segundo
+                    ? (feita2Atraso
+                        ? `<div class="done-late-msg">Realizada com atraso: +${formatarTempo(tempo2 - sla.second * 60)}</div>`
+                        : `<div class="done-ok-msg">Realizada em ${formatarTempo(tempo2)}</div>`)
+                    : (atrasada2 ? `<div class="overdue-msg">ATRASADO: +${formatarTempo(tempo2 - sla.second * 60)}</div>` : '')}
                 ` : `
                   <div style="color: #4a7ba7; font-size: 12px; font-style: italic;">Aguardando 1ª avaliação</div>
                 `}
               </div>
             </div>
 
+            ${renderBundle(p)}
+
             <div class="actions">
-              ${!p.primeiro ? `<button class="btn-action btn-check" onclick="marcarAvaliacao(${p.id}, 'primeira')">✓ Marcar 1ª</button>` : ''}
-              ${p.primeiro && !p.segundo ? `<button class="btn-action btn-check" onclick="marcarAvaliacao(${p.id}, 'segunda')">✓ Marcar 2ª</button>` : ''}
-              ${p.segundo ? `<button class="btn-action btn-done" disabled>✓ Completo</button>` : ''}
-              <button class="btn-action btn-remove" onclick="removerPaciente(${p.id})">✕ Remover</button>
+              ${p.arquivado ? `
+                <button class="btn-action btn-unarchive" onclick="desarquivarPaciente(${p.id})">↩ Desarquivar</button>
+                <button class="btn-action btn-remove" onclick="removerPaciente(${p.id})">✕ Remover</button>
+              ` : `
+                ${!p.primeiro ? `<button class="btn-action btn-check" onclick="marcarAvaliacao(${p.id}, 'primeira')">✓ Registrar 1ª reav.</button>` : ''}
+                ${p.primeiro && !p.segundo ? `<button class="btn-action btn-check" onclick="marcarAvaliacao(${p.id}, 'segunda')">✓ Registrar 2ª reav.</button>` : ''}
+                ${p.segundo ? `<button class="btn-action btn-done" disabled>✓ Completo</button>` : ''}
+                <button class="btn-action btn-archive" onclick="arquivarPaciente(${p.id})">📥 Arquivar</button>
+                <button class="btn-action btn-remove" onclick="removerPaciente(${p.id})">✕ Remover</button>
+              `}
             </div>
           </div>
         `;
@@ -1057,6 +1388,12 @@
         const { data, error } = await sb.from('pacientes').select('dados');
         if (error) { console.warn('Erro ao carregar:', error.message); return; }
         pacientes = (data || []).map(r => r.dados).filter(Boolean);
+        // Compatibilidade: garante os campos novos em registros antigos
+        pacientes.forEach(p => {
+          if (typeof p.arquivado === 'undefined') p.arquivado = false;
+          if (typeof p.arquivadoEm === 'undefined') p.arquivadoEm = null;
+          if (typeof p.checklist === 'undefined' || p.checklist === null) p.checklist = {};
+        });
         // Mais recentes primeiro (id = timestamp de criação)
         pacientes.sort((a, b) => b.id - a.id);
         localStorage.setItem('pacientes', JSON.stringify(pacientes));
@@ -1099,6 +1436,13 @@
     }
 
     // ============ INICIALIZAÇÃO ============
+    // Compatibilidade: garante campos novos em dados vindos do localStorage
+    pacientes.forEach(p => {
+      if (typeof p.arquivado === 'undefined') p.arquivado = false;
+      if (typeof p.arquivadoEm === 'undefined') p.arquivadoEm = null;
+      if (typeof p.checklist === 'undefined' || p.checklist === null) p.checklist = {};
+    });
+
     document.getElementById('status').textContent = '🟢 Conectado (localStorage)';
 
     // Tenta subir para Supabase (se conectar, muda o status e sincroniza)
@@ -1106,13 +1450,13 @@
 
     // Solicitar permissão para notificações
     solicitarPermissaoNotificacao();
-    
+
     // Atualizar renderização a cada segundo
     setInterval(renderizarPacientes, 1000);
-    
+
     // Verificar SLA vencido a cada 30 segundos
     setInterval(verificarSLAVencido, 30000);
-    
+
     // Primeira renderização e verificação
     renderizarPacientes();
     verificarSLAVencido();
