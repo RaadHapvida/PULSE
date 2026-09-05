@@ -248,6 +248,35 @@
       gap: 1.5rem;
     }
 
+    /* #3 — cabeçalho de grupo por data na visão de arquivados */
+    .date-group {
+      margin-bottom: 2rem;
+    }
+
+    .date-group-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      background: linear-gradient(135deg, #e2e8f0 0%, #eef2f7 100%);
+      color: #334155;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-weight: 700;
+      font-size: 15px;
+      border-left: 4px solid #64748b;
+    }
+
+    .date-group-count {
+      font-size: 12px;
+      font-weight: 600;
+      color: #64748b;
+      background: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+    }
+
     .patient-card {
       background: white;
       border: 1px solid #d9e8f5;
@@ -1271,35 +1300,64 @@
         return;
       }
 
-      container.innerHTML = '<div class="patient-grid">' + lista.map(p => {
-        const sla = SLA_CONFIG[p.tipo] || SLA_CONFIG.padrao;
-        const tempo1 = tempoDecorrido(p, 'primeira');
-        const tempo2 = p.primeiro ? tempoDecorrido(p, 'segunda') : 0;
+      if (viewArquivados) {
+        // #3 — arquivados agrupados por data de inclusão (dia do atendimento), mais recentes primeiro
+        const grupos = {};
+        lista.forEach(p => {
+          const dia = p.criacao ? formatarData(p.criacao) : 'Sem data';
+          (grupos[dia] = grupos[dia] || []).push(p);
+        });
+        const dias = Object.keys(grupos).sort((a, b) => {
+          const ka = a.split('/').reverse().join('');
+          const kb = b.split('/').reverse().join('');
+          return kb.localeCompare(ka);
+        });
+        container.innerHTML = dias.map(dia => `
+          <div class="date-group">
+            <div class="date-group-header">
+              <span>📅 ${dia}</span>
+              <span class="date-group-count">${grupos[dia].length} paciente(s)</span>
+            </div>
+            <div class="patient-grid">${grupos[dia].map(renderCard).join('')}</div>
+          </div>
+        `).join('');
+      } else {
+        container.innerHTML = '<div class="patient-grid">' + lista.map(renderCard).join('') + '</div>';
+      }
 
-        const status1 = statusAvaliacao(p, 'primeira');
-        const status2 = statusAvaliacao(p, 'segunda');
+      atualizarStats();
+    }
 
-        // #1 — determina se a reavaliação foi concluída dentro ou fora do prazo
-        const feita1Atraso = p.primeiro && tempo1 > sla.first * 60;
-        const feita2Atraso = p.segundo && tempo2 > sla.second * 60;
+    // Monta o HTML de um card de paciente (reutilizado nas visões ativa e arquivada)
+    function renderCard(p) {
+      const sla = SLA_CONFIG[p.tipo] || SLA_CONFIG.padrao;
+      const tempo1 = tempoDecorrido(p, 'primeira');
+      const tempo2 = p.primeiro ? tempoDecorrido(p, 'segunda') : 0;
 
-        const atrasada1 = !p.primeiro && tempo1 > sla.first * 60;
-        const atrasada2 = p.primeiro && !p.segundo && tempo2 > sla.second * 60;
+      const status1 = statusAvaliacao(p, 'primeira');
+      const status2 = statusAvaliacao(p, 'segunda');
 
-        const dataNascFormatada = p.dataNascimento ? formatarData(p.dataNascimento) : 'Data não informada';
-        const dataInclusaoFormatada = p.criacao ? formatarDataHora(p.criacao) : 'Data não informada';
+      // #1 — determina se a reavaliação foi concluída dentro ou fora do prazo
+      const feita1Atraso = p.primeiro && tempo1 > sla.first * 60;
+      const feita2Atraso = p.segundo && tempo2 > sla.second * 60;
 
-        // classe da 1ª caixa
-        let box1cls = '';
-        if (p.primeiro) box1cls = feita1Atraso ? 'done-late' : 'done-ok';
-        else box1cls = status1 === 'overdue' ? 'overdue' : status1 === 'warning' ? 'warning' : '';
+      const atrasada1 = !p.primeiro && tempo1 > sla.first * 60;
+      const atrasada2 = p.primeiro && !p.segundo && tempo2 > sla.second * 60;
 
-        // classe da 2ª caixa
-        let box2cls = '';
-        if (p.segundo) box2cls = feita2Atraso ? 'done-late' : 'done-ok';
-        else if (p.primeiro) box2cls = status2 === 'overdue' ? 'overdue' : status2 === 'warning' ? 'warning' : '';
+      const dataNascFormatada = p.dataNascimento ? formatarData(p.dataNascimento) : 'Data não informada';
+      const dataInclusaoFormatada = p.criacao ? formatarDataHora(p.criacao) : 'Data não informada';
 
-        return `
+      // classe da 1ª caixa
+      let box1cls = '';
+      if (p.primeiro) box1cls = feita1Atraso ? 'done-late' : 'done-ok';
+      else box1cls = status1 === 'overdue' ? 'overdue' : status1 === 'warning' ? 'warning' : '';
+
+      // classe da 2ª caixa
+      let box2cls = '';
+      if (p.segundo) box2cls = feita2Atraso ? 'done-late' : 'done-ok';
+      else if (p.primeiro) box2cls = status2 === 'overdue' ? 'overdue' : status2 === 'warning' ? 'warning' : '';
+
+      return `
           <div class="patient-card ${p.arquivado ? 'arquivada' : ''}">
             <div class="patient-header">
               <div class="patient-info">
@@ -1355,9 +1413,6 @@
             </div>
           </div>
         `;
-      }).join('') + '</div>';
-
-      atualizarStats();
     }
 
     // ============ SUPABASE (sincronização entre dispositivos) ============
