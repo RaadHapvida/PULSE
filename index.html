@@ -47,6 +47,17 @@
       gap: 2rem;
     }
 
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-logo {
+      flex-shrink: 0;
+      display: flex;
+    }
+
     .header-content h1 {
       font-size: 28px;
       margin-bottom: 0.5rem;
@@ -926,8 +937,23 @@
   <div class="container">
     <div class="header">
       <div class="header-content">
-        <h1>🏥 PULSE - Pronto Socorro</h1>
-        <p>Sistema Inteligente de Triagem | Identificação de Risco em Tempo Real</p>
+        <div class="brand-logo">
+          <svg width="58" height="58" viewBox="0 0 100 100" role="img" aria-label="Logo PULSE">
+            <rect width="100" height="100" rx="22" fill="#ffffff"/>
+            <defs>
+              <linearGradient id="hdrHeartGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#1a74d6"/>
+                <stop offset="1" stop-color="#003d99"/>
+              </linearGradient>
+            </defs>
+            <path d="M50,82 C24,63 12,45 12,30 C12,19 20,12 29,12 C37,12 44,17 50,25 C56,17 63,12 71,12 C80,12 88,19 88,30 C88,45 76,63 50,82 Z" fill="url(#hdrHeartGrad)"/>
+            <polyline points="24,50 40,50 46,37 54,63 60,50 76,50" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1>PULSE - Pronto Socorro</h1>
+          <p>Sistema Inteligente de Triagem | Identificação de Risco em Tempo Real</p>
+        </div>
       </div>
       <div class="header-brand">
         <span class="brand-hapvida">Hapvida</span>
@@ -1348,7 +1374,7 @@
     function enviarNotificacao(titulo, opcoes = {}) {
       if ('Notification' in window && Notification.permission === 'granted') {
         new Notification(titulo, {
-          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%230066cc" width="100" height="100"/><text x="50" y="70" font-size="60" font-weight="bold" fill="white" text-anchor="middle">!</text></svg>',
+          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%23e8f1f8"/><path d="M50,82 C24,63 12,45 12,30 C12,19 20,12 29,12 C37,12 44,17 50,25 C56,17 63,12 71,12 C80,12 88,19 88,30 C88,45 76,63 50,82 Z" fill="%230a4fa3"/><polyline points="24,50 40,50 46,37 54,63 60,50 76,50" fill="none" stroke="%23ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
           badge: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23dc2626"/></svg>',
           ...opcoes
         });
