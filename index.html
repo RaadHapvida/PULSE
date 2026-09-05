@@ -364,6 +364,68 @@
       border-left: 3px solid #dc2626;
     }
 
+    /* Chips de critérios no formulário */
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      border: 1px solid #b3d9ff;
+      background: white;
+      color: #4a7ba7;
+      user-select: none;
+      transition: all 0.15s;
+    }
+
+    .chip:hover {
+      border-color: #0066cc;
+    }
+
+    .chip.active {
+      background: #0066cc;
+      color: white;
+      border-color: #0066cc;
+    }
+
+    .chip.active.proto {
+      background: #dc2626;
+      border-color: #dc2626;
+    }
+
+    /* Badges múltiplos no card */
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-end;
+      max-width: 55%;
+    }
+
+    /* Linha de critérios marcados no card */
+    .criterios-text {
+      background: #f0f9ff;
+      color: #1e40af;
+      padding: 0.6rem 0.75rem;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 0.5rem;
+      border-left: 3px solid #0066cc;
+    }
+
+    .obs-text {
+      font-size: 12px;
+      color: #64748b;
+      font-style: italic;
+      margin-top: 0.5rem;
+    }
+
     .sla-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -770,17 +832,24 @@
           </div>
 
           <div class="form-group">
-            <label>Queixa Principal / Sintomas *</label>
-            <textarea id="queixa" placeholder="Ex: Febre 38.5°C há 3 dias, confusão mental, pressão baixa&#10;Ou: Idoso vivendo sozinho, sem apoio familiar&#10;Ou: Gestante com sangramento&#10;Ou: Déficit neurológico focal, afasia" required></textarea>
+            <label>Critérios de vulnerabilidade</label>
+            <div id="chips-vuln" class="chips"></div>
           </div>
 
-          <div style="background: #f0f9ff; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem; border-left: 3px solid #0066cc;">
-            <div style="font-size: 12px; color: #1e40af; font-weight: 600; margin-bottom: 0.5rem;">💡 Dicas de classificação:</div>
-            <div style="font-size: 11px; color: #1e40af; line-height: 1.5;">
-              • <strong>Vulnerável:</strong> Idoso sozinho, sem moradia, deficiência, situação pobreza, imigrante, vítima de violência, criança em risco, transtorno mental, paciente psiquiátrico (PQ), ideação suicida<br>
-              • <strong>Prioritário:</strong> Deficiência, TEA, 60+, gestante, lactante, mobilidade reduzida, obesidade<br>
-              • <strong>Protocolo gerenciado:</strong> Sepse (febre+confusão), AVC (déficit neurológico), Dor torácica
-            </div>
+          <div class="form-group">
+            <label>Critérios de prioridade</label>
+            <div id="chips-prio" class="chips"></div>
+            <div style="font-size: 11px; color: #64748b; margin-top: 0.5rem;">ℹ️ 60+ anos entra como prioritário automaticamente pela data de nascimento (80+ = prioridade especial).</div>
+          </div>
+
+          <div class="form-group">
+            <label>Protocolos gerenciados</label>
+            <div id="chips-proto" class="chips"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Observação (opcional)</label>
+            <textarea id="obs" placeholder="Anotação livre — não classifica nada, só fica no registro"></textarea>
           </div>
 
           <button type="submit" class="form-submit" id="btn-submit">Adicionar Paciente</button>
@@ -806,34 +875,74 @@
     // Carrega do localStorage primeiro (funciona mesmo sem internet / Supabase)
     let pacientes = JSON.parse(localStorage.getItem('pacientes')) || [];
 
-    // ============ CRITÉRIOS DE CLASSIFICAÇÃO ============
-    const VULNERAVEIS_KEYWORDS = [
-      'idoso', 'sozinho', 'isolado', 'vive só', 'sem apoio', 'sem família',
-      'deficiência', 'deficiente', 'deficiente físico', 'deficiente sensorial', 'deficiente intelectual',
-      'cego', 'surdo', 'cadeira de rodas', 'paralisia',
-      'doença crônica', 'crônico', 'complexo',
-      'pobreza', 'pobre', 'exclusão social', 'vulnerável',
-      'imigrante', 'barreira linguística', 'estrangeiro',
-      'sem moradia', 'sem teto', 'rua', 'abrigado',
-      'violência', 'abuso', 'agressão', 'vítima',
-      'criança risco', 'criança negligenciada', 'criança abusada',
-      'transtorno mental', 'transtorno psiquiátrico', 'esquizofrenia', 'bipolar', 'depressão',
-      'pq', 'psiquiátrico', 'psiquiátrica', 'paciente psiquiátrico', 'paciente psiquiátrica',
-      'ideação suicida', 'ideacao suicida', 'pensamento suicida', 'tentativa de suicídio', 'tentativa de auto exterminio', 'auto exterminio',
-      'suicídio', 'suicida', 'suicídas', 'risco suicida'
+    // ============ CRITÉRIOS MARCÁVEIS (CHIPS) ============
+    // O médico marca; a classificação não depende de interpretar texto livre.
+    const CRITERIOS_VULN = [
+      { id: 'idoso_sozinho', label: 'Idoso sozinho' },
+      { id: 'vitima_violencia', label: 'Vítima de violência' },
+      { id: 'acidente_trabalho', label: 'Acidente de trabalho' },
+      { id: 'psiquiatrico', label: 'Psiquiátrico (PQ)' },
+      { id: 'risco_suicida', label: 'Risco / ideação suicida' },
+      { id: 'situacao_rua', label: 'Situação de rua' },
+      { id: 'dependencia_quimica', label: 'Dependência química / álcool' },
+      { id: 'barreira_comunicacao', label: 'Barreira de comunicação' },
+      { id: 'oncologico_paliativo', label: 'Oncológico / paliativo' },
+      { id: 'imunossuprimido', label: 'Imunossuprimido' }
     ];
 
-    const PRIORITARIOS_KEYWORDS = [
-      'deficiência', 'deficiente',
-      'autismo', 'autista', 'tea', 'espectro autista',
-      'idoso', 'idosa', '60', '70', '80', '90', 'idoso 80', 'maiores de 80',
-      'gestante', 'grávida', 'gravidez', 'gestação', 'prenhe',
-      'lactante', 'amamentando', 'aleitamento',
-      'criança colo', 'bebê', 'lactante', 'criança pequena',
-      'mobilidade reduzida', 'muleta', 'bengala', 'andador',
-      'obesidade', 'obeso',
-      'doador sangue'
+    const CRITERIOS_PRIO = [
+      { id: 'critico', label: 'Crítico / grave' },
+      { id: 'deficiencia', label: 'Deficiência' },
+      { id: 'tea', label: 'TEA / autismo' },
+      { id: 'mobilidade_reduzida', label: 'Mobilidade reduzida' },
+      { id: 'obesidade', label: 'Obesidade' },
+      { id: 'gestante', label: 'Gestante' },
+      { id: 'doador_sangue', label: 'Doador de sangue' },
+      { id: 'ostomizado', label: 'Ostomizado' }
     ];
+
+    const CRITERIOS_PROTO = [
+      { id: 'sepse', label: 'Sepse' },
+      { id: 'avc', label: 'AVC' },
+      { id: 'dor_toracica', label: 'Dor torácica' }
+    ];
+
+    // Mapa id -> rótulo (inclui flags automáticas de idade e registros legados)
+    const LABEL = {};
+    [...CRITERIOS_VULN, ...CRITERIOS_PRIO, ...CRITERIOS_PROTO].forEach(c => LABEL[c.id] = c.label);
+    LABEL['idoso_60'] = 'Idoso 60+';
+    LABEL['idoso_80'] = 'Idoso 80+ (prioridade especial)';
+    LABEL['legado'] = 'Registro anterior';
+
+    // Alguma flag marcada em qualquer grupo?
+    function temAlgumaFlag(p) {
+      return ((p.flagsProto && p.flagsProto.length) ||
+              (p.flagsVuln && p.flagsVuln.length) ||
+              (p.flagsPrio && p.flagsPrio.length)) ? true : false;
+    }
+
+    // SLA derivado: qualquer flag = urgente (60/180); sem flag = padrão (120/240)
+    function getSLA(p) {
+      return temAlgumaFlag(p) ? { first: 60, second: 180 } : { first: 120, second: 240 };
+    }
+
+    // Compatibiliza registros (localStorage e Supabase), inclusive os antigos com "tipo" único
+    function migrarPaciente(p) {
+      if (typeof p.arquivado === 'undefined') p.arquivado = false;
+      if (typeof p.arquivadoEm === 'undefined') p.arquivadoEm = null;
+      if (typeof p.checklist === 'undefined' || p.checklist === null) p.checklist = {};
+      if (!Array.isArray(p.flagsVuln)) p.flagsVuln = [];
+      if (!Array.isArray(p.flagsPrio)) p.flagsPrio = [];
+      if (!Array.isArray(p.flagsProto)) p.flagsProto = [];
+      // Deriva flags de registros antigos (classificação por tipo único)
+      if (p.tipo && !p.flagsVuln.length && !p.flagsPrio.length && !p.flagsProto.length) {
+        if (['sepse', 'avc', 'dor_toracica'].includes(p.tipo)) p.flagsProto.push(p.tipo);
+        else if (p.tipo === 'vulneravel') p.flagsVuln.push('legado');
+        else if (p.tipo === 'prioritario') p.flagsPrio.push('legado');
+      }
+      if (typeof p.obs === 'undefined') p.obs = p.queixa || '';
+      return p;
+    }
 
     const SLA_CONFIG = {
       sepse: { first: 60, second: 180 },
@@ -902,6 +1011,8 @@
     }
 
     function abrirModal() {
+      selCriterios = { vuln: {}, prio: {}, proto: {} };
+      renderChips();
       document.getElementById('modal').classList.add('show');
     }
 
@@ -910,8 +1021,10 @@
       document.getElementById('nome').value = '';
       document.getElementById('dataNascimento').value = '';
       document.getElementById('numeroAtendimento').value = '';
-      document.getElementById('queixa').value = '';
+      document.getElementById('obs').value = '';
       document.getElementById('idade-display').style.display = 'none';
+      selCriterios = { vuln: {}, prio: {}, proto: {} };
+      renderChips();
     }
 
     // Mostra a idade automaticamente ao preencher a data de nascimento
@@ -934,85 +1047,31 @@
       renderizarPacientes();
     }
 
-    // ============ CLASSIFICAÇÃO ============
-    // Normaliza texto: minúsculas + remove acentos, para captar o que o médico
-    // escrever mesmo sem acento ("psiquiatrico", "confusao", "torax" etc.)
-    function normaliza(s) {
-      return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    // ============ CHIPS DE CRITÉRIOS (seleção no formulário) ============
+    let selCriterios = { vuln: {}, prio: {}, proto: {} };
+
+    const GRUPO_LISTA = { vuln: CRITERIOS_VULN, prio: CRITERIOS_PRIO, proto: CRITERIOS_PROTO };
+    const GRUPO_EL = { vuln: 'chips-vuln', prio: 'chips-prio', proto: 'chips-proto' };
+
+    function montaGrupo(grupo) {
+      const el = document.getElementById(GRUPO_EL[grupo]);
+      if (!el) return;
+      el.innerHTML = GRUPO_LISTA[grupo].map(c => {
+        const on = selCriterios[grupo][c.id];
+        const extra = grupo === 'proto' ? ' proto' : '';
+        return `<span class="chip${on ? ' active' : ''}${extra}" onclick="toggleCriterio('${grupo}','${c.id}')">${c.label}</span>`;
+      }).join('');
     }
 
-    function classificarPaciente(nome, idade, queixa) {
-      const texto = normaliza(nome + ' ' + idade + ' ' + queixa);
-      const idadeNum = parseInt(idade);
-      const tem = (t) => texto.includes(normaliza(t)); // comparação sempre normalizada
+    function renderChips() {
+      montaGrupo('vuln');
+      montaGrupo('prio');
+      montaGrupo('proto');
+    }
 
-      // ★ PALAVRAS-CHAVE DIRETAS (máxima prioridade)
-      if (tem('vulneravel')) {
-        return { tipo: 'vulneravel', motivo: 'VULNERÁVEL: classificado diretamente' };
-      }
-
-      if (tem('prioritario')) {
-        return { tipo: 'prioritario', motivo: 'PRIORITÁRIO: classificado diretamente' };
-      }
-
-      // ★ PSIQUIÁTRICO + IDEAÇÃO/PENSAMENTO SUICIDA (VULNERÁVEL)
-      if ((tem('pq') || tem('psiquiatric')) &&
-          (tem('ideacao') || tem('pensamento suicida') || tem('suicida') || tem('auto exterminio'))) {
-        return { tipo: 'vulneravel', motivo: 'VULNERÁVEL: Paciente psiquiátrico com ideação suicida' };
-      }
-
-      // ★ SÓ IDEAÇÃO/PENSAMENTO SUICIDA (VULNERÁVEL)
-      if (tem('ideacao') || tem('pensamento suicida') ||
-          tem('tentativa de suicidio') || tem('tentativa de auto exterminio') || tem('auto exterminio') ||
-          tem('risco suicida')) {
-        return { tipo: 'vulneravel', motivo: 'VULNERÁVEL: Risco suicida/ideação suicida' };
-      }
-
-      // ★ SÓ PSIQUIÁTRICO (VULNERÁVEL)
-      if (tem('pq') || tem('psiquiatric')) {
-        return { tipo: 'vulneravel', motivo: 'VULNERÁVEL: Paciente psiquiátrico' };
-      }
-
-      if (tem('sepse') ||
-          (tem('febre') && (tem('confusao') || tem('desorientacao'))) ||
-          (tem('febre') && (tem('hipotensao') || tem('pressao baixa'))) ||
-          (tem('febre') && tem('choque'))) {
-        return { tipo: 'sepse', motivo: 'SEPSE: febre + confusão/hipotensão/choque' };
-      }
-
-      if (tem('avc') ||
-          tem('acidente vascular') ||
-          (tem('deficit') && tem('neurologic')) ||
-          tem('hemiplegia') ||
-          tem('afasia') ||
-          (tem('paralisia') && (tem('face') || tem('braco') || tem('perna')))) {
-        return { tipo: 'avc', motivo: 'AVC: deficit neurológico focal agudo' };
-      }
-
-      if ((tem('dor') && (tem('torac') || tem('peito'))) ||
-          tem('dor toracica') ||
-          tem('iam') ||
-          tem('infarto') ||
-          tem('infarto agudo do miocardio') ||
-          tem('angina') ||
-          (tem('pressao') && tem('peito')) ||
-          (tem('aperto') && tem('peito')) ||
-          (tem('dor') && tem('isquemic'))) {
-        return { tipo: 'dor_toracica', motivo: 'DOR TORÁCICA: risco de evento isquêmico' };
-      }
-
-      if (VULNERAVEIS_KEYWORDS.some(k => texto.includes(normaliza(k)))) {
-        return { tipo: 'vulneravel', motivo: 'VULNERÁVEL: paciente em situação de vulnerabilidade' };
-      }
-
-      if (PRIORITARIOS_KEYWORDS.some(k => texto.includes(normaliza(k))) || idadeNum >= 60) {
-        if (idadeNum >= 80) {
-          return { tipo: 'prioritario', motivo: 'PRIORITÁRIO: Idoso 80+ anos (prioridade especial)' };
-        }
-        return { tipo: 'prioritario', motivo: 'PRIORITÁRIO: paciente com características de prioridade' };
-      }
-
-      return { tipo: 'padrao', motivo: 'Triagem padrão' };
+    function toggleCriterio(grupo, id) {
+      selCriterios[grupo][id] = !selCriterios[grupo][id];
+      montaGrupo(grupo);
     }
 
     function adicionarPaciente(event) {
@@ -1022,9 +1081,15 @@
       const dataNascimento = document.getElementById('dataNascimento').value;
       const numeroAtendimento = document.getElementById('numeroAtendimento').value;
       const idade = calcularIdade(dataNascimento);
-      const queixa = document.getElementById('queixa').value;
+      const obs = document.getElementById('obs').value;
 
-      const classif = classificarPaciente(nome, idade, queixa);
+      const flagsVuln = Object.keys(selCriterios.vuln).filter(k => selCriterios.vuln[k]);
+      const flagsPrio = Object.keys(selCriterios.prio).filter(k => selCriterios.prio[k]);
+      const flagsProto = Object.keys(selCriterios.proto).filter(k => selCriterios.proto[k]);
+
+      // Prioridade automática por idade (Estatuto do Idoso)
+      if (idade >= 80) { if (!flagsPrio.includes('idoso_80')) flagsPrio.push('idoso_80'); }
+      else if (idade >= 60) { if (!flagsPrio.includes('idoso_60')) flagsPrio.push('idoso_60'); }
 
       const paciente = {
         id: Date.now(),
@@ -1032,15 +1097,16 @@
         dataNascimento,
         numeroAtendimento,
         idade,
-        queixa,
-        tipo: classif.tipo,
-        motivo: classif.motivo,
+        obs,
+        flagsVuln,
+        flagsPrio,
+        flagsProto,
         criacao: new Date().toISOString(),
         primeiro: null,
         segundo: null,
-        arquivado: false,      // #3
-        arquivadoEm: null,     // #3
-        checklist: {}          // #8
+        arquivado: false,
+        arquivadoEm: null,
+        checklist: {}
       };
 
       pacientes.unshift(paciente);
@@ -1133,7 +1199,7 @@
     function verificarSLAVencido() {
       pacientes.forEach(p => {
         if (p.arquivado) return; // arquivados não geram alerta
-        const sla = SLA_CONFIG[p.tipo] || SLA_CONFIG.padrao;
+        const sla = getSLA(p);
         const agora = new Date();
 
         // Verificar 1ª avaliação
@@ -1204,7 +1270,7 @@
     }
 
     function statusAvaliacao(p, tipo) {
-      const sla = SLA_CONFIG[p.tipo] || SLA_CONFIG.padrao;
+      const sla = getSLA(p);
       const agora = new Date();
 
       if (tipo === 'primeira') {
@@ -1250,60 +1316,64 @@
       const visiveis = pacientes.filter(p => viewArquivados ? p.arquivado : !p.arquivado);
 
       document.getElementById('total-pacientes').textContent = visiveis.length;
-      document.getElementById('vulneraveis').textContent = visiveis.filter(p => p.tipo === 'vulneravel').length;
-      document.getElementById('prioritarios').textContent = visiveis.filter(p => p.tipo === 'prioritario').length;
+      document.getElementById('vulneraveis').textContent = visiveis.filter(p => (p.flagsVuln || []).length > 0).length;
+      document.getElementById('prioritarios').textContent = visiveis.filter(p => (p.flagsPrio || []).length > 0).length;
 
-      const nSepse = visiveis.filter(p => p.tipo === 'sepse').length;
-      const nAvc = visiveis.filter(p => p.tipo === 'avc').length;
-      const nDor = visiveis.filter(p => p.tipo === 'dor_toracica').length;
+      const nSepse = visiveis.filter(p => (p.flagsProto || []).includes('sepse')).length;
+      const nAvc = visiveis.filter(p => (p.flagsProto || []).includes('avc')).length;
+      const nDor = visiveis.filter(p => (p.flagsProto || []).includes('dor_toracica')).length;
       const total = nSepse + nAvc + nDor;
 
       document.getElementById('protocolos').textContent = total;
       document.getElementById('protocolos-sub').textContent = `Sepse ${nSepse} · AVC ${nAvc} · Dor Torácica ${nDor}`;
     }
 
-    // #8 — renderiza o bundle do protocolo (checklist com horário e cor por prazo)
+    // #8 — renderiza um bundle para CADA protocolo marcado (checklist com horário e cor por prazo)
     function renderBundle(p) {
-      if (!PROTOCOLOS_URGENTES.includes(p.tipo)) return '';
-      const itens = PROTOCOLO_CHECKLIST[p.tipo] || [];
-      if (!itens.length) return '';
+      const protos = p.flagsProto || [];
+      if (!protos.length) return '';
 
-      const sla = SLA_CONFIG[p.tipo] || SLA_CONFIG.padrao;
+      const sla = getSLA(p);
       const limiteSeg = sla.first * 60;
       const chk = p.checklist || {};
 
-      const linhas = itens.map(it => {
-        const ts = chk[it.id];
-        let cls = '';
-        let info = '';
+      return protos.map(proto => {
+        const itens = PROTOCOLO_CHECKLIST[proto] || [];
+        if (!itens.length) return '';
 
-        if (ts) {
-          const decor = Math.floor((new Date(ts) - new Date(p.criacao)) / 1000);
-          const dentro = decor <= limiteSeg;
-          cls = dentro ? 'done' : 'late';
-          const mins = Math.floor(decor / 60);
-          if (dentro) {
-            info = `<span class="bundle-time ok">✓ ${formatarHora(ts)} · ${mins}min</span>`;
-          } else {
-            const atrasoMin = Math.floor((decor - limiteSeg) / 60);
-            info = `<span class="bundle-time late">✓ ${formatarHora(ts)} · +${atrasoMin}min</span>`;
+        const linhas = itens.map(it => {
+          const ts = chk[it.id];
+          let cls = '';
+          let info = '';
+
+          if (ts) {
+            const decor = Math.floor((new Date(ts) - new Date(p.criacao)) / 1000);
+            const dentro = decor <= limiteSeg;
+            cls = dentro ? 'done' : 'late';
+            const mins = Math.floor(decor / 60);
+            if (dentro) {
+              info = `<span class="bundle-time ok">✓ ${formatarHora(ts)} · ${mins}min</span>`;
+            } else {
+              const atrasoMin = Math.floor((decor - limiteSeg) / 60);
+              info = `<span class="bundle-time late">✓ ${formatarHora(ts)} · +${atrasoMin}min</span>`;
+            }
           }
-        }
 
-        const check = ts ? '☑' : '☐';
+          const check = ts ? '☑' : '☐';
+          return `
+            <div class="bundle-item ${cls}" onclick="marcarItem(${p.id}, '${it.id}')">
+              <span class="bundle-check">${check}</span>
+              <span class="bundle-label">${it.label}</span>
+              ${info}
+            </div>`;
+        }).join('');
+
         return `
-          <div class="bundle-item ${cls}" onclick="marcarItem(${p.id}, '${it.id}')">
-            <span class="bundle-check">${check}</span>
-            <span class="bundle-label">${it.label}</span>
-            ${info}
+          <div class="bundle">
+            <div class="bundle-title">🎯 Bundle ${LABEL[proto] || proto} — meta ${sla.first}min</div>
+            ${linhas}
           </div>`;
       }).join('');
-
-      return `
-        <div class="bundle">
-          <div class="bundle-title">🎯 Bundle do protocolo — meta ${sla.first}min</div>
-          ${linhas}
-        </div>`;
     }
 
     function renderizarPacientes() {
@@ -1349,7 +1419,7 @@
 
     // Monta o HTML de um card de paciente (reutilizado nas visões ativa e arquivada)
     function renderCard(p) {
-      const sla = SLA_CONFIG[p.tipo] || SLA_CONFIG.padrao;
+      const sla = getSLA(p);
       const tempo1 = tempoDecorrido(p, 'primeira');
       const tempo2 = p.primeiro ? tempoDecorrido(p, 'segunda') : 0;
 
@@ -1370,6 +1440,23 @@
       const idadeRotulo = (idadeCard != null && idadeCard >= 0) ? ` (${idadeCard} ${idadeCard === 1 ? 'ano' : 'anos'})` : '';
       const dataInclusaoFormatada = p.criacao ? formatarDataHora(p.criacao) : 'Data não informada';
 
+      // Badges (um por protocolo + Vulnerável + Prioritário, todos que existirem)
+      const fProto = p.flagsProto || [];
+      const fVuln = p.flagsVuln || [];
+      const fPrio = p.flagsPrio || [];
+      let badgesHtml = '';
+      fProto.forEach(id => { badgesHtml += `<span class="badge badge-${id}">${LABEL[id] || id}</span>`; });
+      if (fVuln.length) badgesHtml += `<span class="badge badge-vulneravel">Vulnerável</span>`;
+      if (fPrio.length) badgesHtml += `<span class="badge badge-prioritario">Prioritário</span>`;
+      if (!badgesHtml) badgesHtml = `<span class="badge badge-padrao">Padrão</span>`;
+
+      // Linha de critérios marcados (detalhe para leitura e auditoria)
+      const partes = [];
+      if (fProto.length) partes.push('Protocolo: ' + fProto.map(id => LABEL[id] || id).join(', '));
+      if (fVuln.length) partes.push('Vulnerabilidade: ' + fVuln.map(id => LABEL[id] || id).join(', '));
+      if (fPrio.length) partes.push('Prioridade: ' + fPrio.map(id => LABEL[id] || id).join(', '));
+      const criteriosHtml = partes.length ? `<div class="criterios-text">${partes.join(' • ')}</div>` : '';
+
       // classe da 1ª caixa
       let box1cls = '';
       if (p.primeiro) box1cls = feita1Atraso ? 'done-late' : 'done-ok';
@@ -1385,13 +1472,14 @@
             <div class="patient-header">
               <div class="patient-info">
                 <h3>${p.nome}</h3>
-                <p>Nasc: ${dataNascFormatada}${idadeRotulo} • ${p.queixa.substring(0, 50)}${p.queixa.length > 50 ? '...' : ''}</p>
+                <p>Nasc: ${dataNascFormatada}${idadeRotulo}</p>
                 ${p.numeroAtendimento ? `<p style="font-size: 12px; color: #0066cc; font-weight: 600; margin-top: 0.25rem;">Nº Atendimento: ${p.numeroAtendimento}</p>` : ''}
                 <p style="font-size: 11px; color: #888; margin-top: 0.25rem;">📋 Inclusão: ${dataInclusaoFormatada}</p>
                 ${p.arquivado && p.arquivadoEm ? `<p style="font-size: 11px; color: #64748b; font-weight: 600; margin-top: 0.25rem;">📥 Arquivado: ${formatarDataHora(p.arquivadoEm)}</p>` : ''}
-                ${p.motivo ? `<div class="warning-text">⚠️ ${p.motivo}</div>` : ''}
+                ${criteriosHtml}
+                ${p.obs ? `<p class="obs-text">📝 ${p.obs}</p>` : ''}
               </div>
-              <span class="badge badge-${p.tipo}">${p.tipo.replace('_', ' ')}</span>
+              <div class="badges">${badgesHtml}</div>
             </div>
 
             <div class="sla-container">
@@ -1465,13 +1553,7 @@
       try {
         const { data, error } = await sb.from('pacientes').select('dados');
         if (error) { console.warn('Erro ao carregar:', error.message); return; }
-        pacientes = (data || []).map(r => r.dados).filter(Boolean);
-        // Compatibilidade: garante os campos novos em registros antigos
-        pacientes.forEach(p => {
-          if (typeof p.arquivado === 'undefined') p.arquivado = false;
-          if (typeof p.arquivadoEm === 'undefined') p.arquivadoEm = null;
-          if (typeof p.checklist === 'undefined' || p.checklist === null) p.checklist = {};
-        });
+        pacientes = (data || []).map(r => r.dados).filter(Boolean).map(migrarPaciente);
         // Mais recentes primeiro (id = timestamp de criação)
         pacientes.sort((a, b) => b.id - a.id);
         localStorage.setItem('pacientes', JSON.stringify(pacientes));
@@ -1514,12 +1596,8 @@
     }
 
     // ============ INICIALIZAÇÃO ============
-    // Compatibilidade: garante campos novos em dados vindos do localStorage
-    pacientes.forEach(p => {
-      if (typeof p.arquivado === 'undefined') p.arquivado = false;
-      if (typeof p.arquivadoEm === 'undefined') p.arquivadoEm = null;
-      if (typeof p.checklist === 'undefined' || p.checklist === null) p.checklist = {};
-    });
+    // Compatibilidade: garante campos novos (e deriva flags de registros antigos)
+    pacientes = pacientes.map(migrarPaciente);
 
     document.getElementById('status').textContent = '🟢 Conectado (localStorage)';
 
