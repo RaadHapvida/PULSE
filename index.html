@@ -622,12 +622,12 @@
 
     /* ===== Anel de contagem + descrição das reavaliações ===== */
     .reav-block { display: flex; align-items: center; gap: 1.1rem; margin: 1rem 0; }
-    .ring-wrap { position: relative; width: 88px; height: 88px; flex-shrink: 0; }
+    .ring-wrap { position: relative; width: 150px; height: 150px; flex-shrink: 0; }
     .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .ring-time { font-size: 16px; font-weight: 700; font-family: 'Monaco', 'Courier New', monospace; }
-    .ring-label { font-size: 9px; font-weight: 600; color: #94a3b8; margin-top: 2px; }
+    .ring-time { font-weight: 700; font-family: 'Monaco', 'Courier New', monospace; white-space: nowrap; line-height: 1; }
+    .ring-label { font-size: 12px; font-weight: 600; color: #94a3b8; margin-top: 4px; }
     .ring-track { stroke: #eef2f7; }
-    .reav-desc { flex: 1; font-size: 12.5px; line-height: 1.5; }
+    .reav-desc { flex: 1; font-size: 13px; line-height: 1.6; }
     .reav-line { margin-bottom: 2px; color: #475569; }
     .reav-ok { color: #16a34a; font-weight: 600; }
     .reav-late { color: #dc2626; font-weight: 700; }
@@ -1805,16 +1805,16 @@
     // Anel de contagem (cronômetro único da fase ativa)
     function renderRing(p) {
       const fa = faseAtiva(p);
-      const circ = 226.19; // 2*pi*36
+      const circ = 408.41; // 2*pi*65
       if (fa.fase === 0) {
         return `
           <div class="ring-wrap">
-            <svg width="88" height="88" viewBox="0 0 88 88">
-              <circle class="ring-track" cx="44" cy="44" r="36" fill="none" stroke-width="8"/>
-              <circle cx="44" cy="44" r="36" fill="none" stroke="#16a34a" stroke-width="8" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="0" transform="rotate(-90 44 44)"/>
+            <svg width="150" height="150" viewBox="0 0 150 150">
+              <circle class="ring-track" cx="75" cy="75" r="65" fill="none" stroke-width="11"/>
+              <circle cx="75" cy="75" r="65" fill="none" stroke="#16a34a" stroke-width="11" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="0" transform="rotate(-90 75 75)"/>
             </svg>
             <div class="ring-center">
-              <div class="ring-time" style="color:#16a34a;">✓</div>
+              <div class="ring-time" style="color:#16a34a; font-size:42px;">✓</div>
               <div class="ring-label">Concluído</div>
             </div>
           </div>`;
@@ -1822,14 +1822,18 @@
       const frac = Math.min(fa.dec / fa.limite, 1);
       const cor = frac >= 1 ? '#dc2626' : frac >= 0.8 ? '#d97706' : '#16a34a';
       const offset = circ * (1 - frac);
+      const tempoStr = formatarTempo(fa.dec);
+      // Fonte adaptativa: encolhe conforme o número cresce (h:mm:ss) para nunca cortar
+      const n = tempoStr.length;
+      const fsTempo = n >= 8 ? 20 : n >= 7 ? 22 : n >= 6 ? 25 : n >= 5 ? 29 : 33;
       return `
         <div class="ring-wrap">
-          <svg width="88" height="88" viewBox="0 0 88 88">
-            <circle class="ring-track" cx="44" cy="44" r="36" fill="none" stroke-width="8"/>
-            <circle cx="44" cy="44" r="36" fill="none" stroke="${cor}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${offset}" transform="rotate(-90 44 44)"/>
+          <svg width="150" height="150" viewBox="0 0 150 150">
+            <circle class="ring-track" cx="75" cy="75" r="65" fill="none" stroke-width="11"/>
+            <circle cx="75" cy="75" r="65" fill="none" stroke="${cor}" stroke-width="11" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${offset}" transform="rotate(-90 75 75)"/>
           </svg>
           <div class="ring-center">
-            <div class="ring-time" style="color:${cor};">${formatarTempo(fa.dec)}</div>
+            <div class="ring-time" style="color:${cor}; font-size:${fsTempo}px;">${tempoStr}</div>
             <div class="ring-label">${fa.label}</div>
           </div>
         </div>`;
